@@ -1,0 +1,12 @@
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+body {
+  @apply bg-gray-600;
+}
+/* Link hover */
+a {
+}

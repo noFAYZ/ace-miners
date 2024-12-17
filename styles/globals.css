@@ -1,0 +1,15 @@
+@import "fonts/fonts.css";
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+
+@import "./base.css";
+@import "./common.css";
+@import "./menu.css";
+@import "./scrollbar.css";
+@import "./typography.css";
+@import "./form.css";
+/* @import "./layout.css"; */
+/* @import "./slider.css"; */
+
+@import "tailwindcss/utilities";

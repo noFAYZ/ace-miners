@@ -1,0 +1,18 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-title;
+}
+
+.title-1 {
+  @apply font-500 text-24 max-sm:text-20;
+}
+.title-2 {
+  @apply font-500 text-20 max-sm:text-16;
+}
+.title-3 {
+  @apply font-500 text-18 max-sm:text-16;
+}

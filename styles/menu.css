@@ -1,0 +1,22 @@
+.sidebar-container {
+  @apply max-lg:-translate-x-full transition invisible fixed top-0 left-0 bottom-0 w-[265px] 2xl:w-[316px] overflow-auto p-6 xl:p-12 z-50 bg-gray-600;
+}
+.menu-backdrop {
+  @apply invisible fixed inset-0 bg-black/60 z-40 backdrop-blur-md lg:hidden;
+}
+.top-bar-main-area-container {
+  @apply lg:pl-[265px] 2xl:pl-[316px];
+}
+.top-bar-container {
+  @apply sticky top-0 left-0 right-0 p-4 xl:py-12 xl:pr-12 bg-gray-600 z-30;
+}
+.main-container {
+  @apply px-4 xl:pr-12 pb-6;
+}
+/* Show menu on mobile when clicked */
+.sidebar-container.active {
+  @apply block max-lg:translate-x-0 visible;
+}
+.menu-backdrop.active {
+  @apply visible;
+}

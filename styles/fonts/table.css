@@ -1,0 +1,25 @@
+.table tbody tr td,
+.table tbody tr th {
+  @apply py-5;
+}
+.table thead tr th {
+  @apply border-b border-gold-200 pb-3;
+}
+
+.table {
+  @apply w-full text-center;
+}
+.table thead {
+  @apply whitespace-nowrap border-b border-gold-200 font-monument;
+}
+.table thead th {
+  @apply text-gray-500 font-400 text-2xs py-2 px-4 uppercase;
+}
+
+.table tbody tr {
+  @apply border-gray-600 border-b;
+}
+.table tbody tr td,
+.table tbody tr th {
+  @apply text-gray-500 font-400 px-2 whitespace-nowrap;
+}

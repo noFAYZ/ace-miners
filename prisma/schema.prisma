@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model BlacklistStatus {
+  id                       Int     @id @unique @default(autoincrement())
+  nftId                    Int
+  isBlacklisted            Boolean
+  aceMinersContractAddress String
+}
+
+model UserData {
+  id         Int     @id @unique @default(autoincrement())
+  ethAddress String  @unique
+  kdaWallet  String?
+  ltcWallet  String?
+  ckbWallet  String?
+}
+
+model DropData {
+  id      String @id @unique @default(cuid())
+  dropId  Int    @unique @default(autoincrement())
+  eachLTC String
+  eachKDA String
+  eachCKB String
+}
+
+model Nft {
+  id           String     @id @unique @default(cuid())
+  nftId        Int
+  collectionNo String
+  collectionId Collection @relation(fields: [collectionNo], references: [id])
+}
+
+model Collection {
+  id              String @id @unique @default(cuid())
+  contractAddress String @unique
+  collectionNo    Int    @unique @default(autoincrement())
+  nftIds          Nft[]
+}
+
+model ClaimRequests {
+  id               String  @id @unique @default(cuid())
+  claimRequestId   String
+  nftId            Int
+  contractAddress  String
+  isClaimed        Boolean
+  requestStatus    String
+  holderEthAddress String
+  dropId           Int
+  eachLTC          String
+  eachKDA          String
+  eachCKB          String
+
+  @@index([claimRequestId])
+}
+
+model ClaimRequestStatus {
+  id               String  @id @unique @default(cuid())
+  claimRequestId   String  @unique
+  requestStatus    String
+  holderEthAddress String
+  LTC              Boolean
+  KDA              Boolean
+  CKB              Boolean
+  CkbHash          String?
+  KdaHash          String?
+  LtcHash          String?
+
+  @@index([claimRequestId])
+}
+
+model MiningData {
+  id      String @id @unique @default(cuid())
+  stat  Int    @unique @default(autoincrement())
+  LTC String
+  KDA String
+  CKB String
+   @@index([stat])
+}

@@ -1,0 +1,26 @@
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: rgba(88, 88, 237, 1) rgba(0, 0, 0, 0);
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+
+*::-webkit-scrollbar-thumb {
+  @apply bg-primary/50;
+  border: 3px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+}
+:hover:-webkit-scrollbar-thumb {
+  @apply bg-primary;
+}
+:hover::-webkit-scrollbar-thumb {
+  @apply bg-primary;
+}

@@ -1,0 +1,19 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.sortMembers": "explicit",
+    "source.sortImports": "explicit"
+  },
+  "files.exclude": {
+    "node_modules/": true,
+    ".next/": true
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "cSpell.words": ["swiper"],
+  "emmet.includeLanguages": { "javascript": "javascriptreact" },
+  "editor.quickSuggestions": {
+    "strings": true
+  }
+  // "tailwindCSS.rootFontSize": 10
+}
