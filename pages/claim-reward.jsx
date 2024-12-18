@@ -273,7 +273,6 @@ const HomePage = ({ ip }) => {
             (item) => item.holderEthAddress === address
           );
           const claimRequests = getUniquePropertyValues(filteredArray);
-          console.log("CLAIM REGSSS: ", txData);
 
           setpayouts(claimRequests);
           setloading(false);

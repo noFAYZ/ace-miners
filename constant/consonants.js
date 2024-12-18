@@ -4,20 +4,23 @@
 import { Network } from "alchemy-sdk";
 
 
-/*
+
 export const contrAceMinersPhase1 =
   "0x0770a317AF574fBa15F205A60bCA9075206ad0a8";
 export const contrAceMinersPhase2 =
   "0xe635Bd48F69276D6f52cc2e577E5DdecCf16B79c";
-*/
+export const contrAceMinersBoost =
+  "0x1d4df34b59f3185d3b65d227f3ec8b33ca76c9ac";
 
+
+/*
 export const contrAceMinersPhase1 =
   "0xba72b008D53D3E65f6641e1D63376Be2F9C1aD05";
 export const contrAceMinersPhase2 =
   "0xe635Bd48F69276D6f52cc2e577E5DdecCf16B79c";
 export const contrAceMinersBoost =
   "0xDe20F7d79de049341610780758c65fFDc178C309";
-
+*/
 
 
 export const aceMinerContracts = [contrAceMinersPhase1, contrAceMinersPhase2, contrAceMinersBoost];
