@@ -18,6 +18,7 @@ import { useAddress } from "@thirdweb-dev/react";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { Alchemy, Network } from "alchemy-sdk";
 import { parseEther, parseUnits } from "ethers/lib/utils";
+import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import { set, useForm } from "react-hook-form";
 
@@ -163,75 +164,81 @@ const Admin = () => {
   };
 
   return (
-    <MainLayout>
-      {admin.includes(address) ? (
-        <>
-          <div className=" ">
-            <div>
-              {" "}
-              <h1 className="max-sm:text-center title-2 mb-10 text-center">
-                Admin Tools
-              </h1>
+    <>
+      {" "}
+      <Head>
+        <title>Reward Claim</title>
+      </Head>
+      <MainLayout>
+        {admin.includes(address) ? (
+          <>
+            <div className=" ">
+              <div>
+                {" "}
+                <h1 className="max-sm:text-center title-2 mb-10 text-center">
+                  Admin Tools
+                </h1>
+              </div>
+
+              <ul className="grid grid-flow-col text-center text-gray-50 bg-gray-400 rounded-full p-2 border mb-10">
+                <li>
+                  <a
+                    href="#page1"
+                    className={
+                      selectedTab == 1
+                        ? "flex justify-center  py-4 bg-primary rounded-full shadow text-gray-100"
+                        : "flex justify-center text-gray-50 rounded-full bg-gray-400  py-4"
+                    }
+                    onClick={() => setselectedTab(1)}
+                  >
+                    Reward Tool
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#page2"
+                    className={
+                      selectedTab == 2
+                        ? "flex justify-center  py-4 bg-primary rounded-full shadow text-gray-100"
+                        : "flex justify-center text-gray-50 bg-gray-400 rounded-full  py-4"
+                    }
+                    onClick={() => setselectedTab(2)}
+                  >
+                    Blacklist Tool
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#page3"
+                    className={
+                      selectedTab == 3
+                        ? "flex justify-center  py-4  bg-primary rounded-full shadow text-gray-100"
+                        : "flex justify-center rounded-full text-gray-50 bg-gray-400  py-4"
+                    }
+                    onClick={() => setselectedTab(3)}
+                  >
+                    User Wallets
+                  </a>
+                </li>
+              </ul>
+
+              <ActiveTabContent
+                selectedTab={selectedTab}
+                dropData={dropData}
+                onSubmit={onSubmit}
+                handleSubmit={handleSubmit}
+                register={register}
+                onCancelDrop={onCancelDrop}
+                isLoading={isLoading}
+                isDeletingDrop={isDeletingDrop}
+              />
             </div>
-
-            <ul className="grid grid-flow-col text-center text-gray-50 bg-gray-400 rounded-full p-2 border mb-10">
-              <li>
-                <a
-                  href="#page1"
-                  className={
-                    selectedTab == 1
-                      ? "flex justify-center  py-4 bg-primary rounded-full shadow text-gray-100"
-                      : "flex justify-center text-gray-50 rounded-full bg-gray-400  py-4"
-                  }
-                  onClick={() => setselectedTab(1)}
-                >
-                  Reward Tool
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#page2"
-                  className={
-                    selectedTab == 2
-                      ? "flex justify-center  py-4 bg-primary rounded-full shadow text-gray-100"
-                      : "flex justify-center text-gray-50 bg-gray-400 rounded-full  py-4"
-                  }
-                  onClick={() => setselectedTab(2)}
-                >
-                  Blacklist Tool
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#page3"
-                  className={
-                    selectedTab == 3
-                      ? "flex justify-center  py-4  bg-primary rounded-full shadow text-gray-100"
-                      : "flex justify-center rounded-full text-gray-50 bg-gray-400  py-4"
-                  }
-                  onClick={() => setselectedTab(3)}
-                >
-                  User Wallets
-                </a>
-              </li>
-            </ul>
-
-            <ActiveTabContent
-              selectedTab={selectedTab}
-              dropData={dropData}
-              onSubmit={onSubmit}
-              handleSubmit={handleSubmit}
-              register={register}
-              onCancelDrop={onCancelDrop}
-              isLoading={isLoading}
-              isDeletingDrop={isDeletingDrop}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-    </MainLayout>
+          </>
+        ) : (
+          <></>
+        )}
+      </MainLayout>
+    </>
   );
 };
 

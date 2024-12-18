@@ -24,6 +24,7 @@ import ClaimableTokens from "@/containers/ClaimableTokens";
 import { useWalletData } from "@/hooks/useWalletData";
 import { useAddress } from "@thirdweb-dev/react";
 import { Alchemy } from "alchemy-sdk";
+import Head from "next/head";
 import { useEffect, useState } from "react";
 
 import ClaimRewardHistory from "@/components/ClaimRewardHistory";
@@ -315,122 +316,128 @@ const HomePage = ({ ip }) => {
   };
 
   return (
-    <MainLayout>
-      {address ? (
-        <>
-          {isLoading ? (
-            <Loader />
-          ) : hasErrors ? (
-            <div>
-              Error loading data. Please try again.
-              <RefreshButton onClick={refreshAll} />
-            </div>
-          ) : (
-            <div className="w-full">
-              <div className="flex justify-between   flex-wrap xl:justify-between sm:justify-center  mb-5  gap-4">
-                <h1 className="text-center title-2 ">Your NFTs</h1>
+    <>
+      {" "}
+      <Head>
+        <title>Reward Claim</title>
+      </Head>
+      <MainLayout>
+        {address ? (
+          <>
+            {isLoading ? (
+              <Loader />
+            ) : hasErrors ? (
+              <div>
+                Error loading data. Please try again.
                 <RefreshButton onClick={refreshAll} />
-                {!wallets?.ltcWallet ||
-                !wallets?.ckbWallet ||
-                !wallets?.kdaWallet ? (
-                  <>
-                    <Button className="px-6 bg-yellow-500 " active={false}>
-                      Add all Wallets
-                    </Button>
-                  </>
-                ) : (
-                  <div className="flex justify-between w-full">
-                    <ClaimableTokens
-                      nftsNotClaimed={nftsNotClaimed}
-                      address={address}
-                      nftsNotClaimedBoost={nftsNotClaimedBoost}
-                    />
-                    <div>
-                      {nftsNotClaimed || nftsNotClaimedBoost ? (
-                        <div className="flex gap-2 align-middle">
-                          <Button className="px-6 " onClick={handleClaim}>
-                            {isSendingRequest ? (
-                              <>Sending...</>
-                            ) : (
-                              "Send Claim Request"
-                            )}
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex gap-2 align-middle">
-                          <Button className="px-6 bg-primary " active={false}>
-                            Claimed
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
-
-              <NFTCollectionTabs
-                isNftsLoading={isNftsLoading}
-                userAmNft={userAmNft}
-                userAmBoostNft={userAmBoostNft}
-              />
-
-              <div className="grid grid-cols-1 2xl:grid-cols-3 gap-8">
-                <div>
-                  <div className="flex-wrap flex justify-between items-center mb-4 sm:mb-6 gap-x-2">
-                    <h2 className="title-2">Verifications</h2>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-1 gap-6 flex-wrap">
-                    <Card
-                      className="max-sm:flex-col max-sm:justify-center max-sm:text-center max-sm:gap-y-3 flex-shrink-0 transition bg-gray-400 rounded-2xl p-4 md:p-6 flex items-center gap-x-5 relative"
-                      key={"index"}
-                    >
-                      <VerifyLTCWallet
-                        ltcWallet={wallets?.ltcWallet}
-                        unfts={userAmNft}
+            ) : (
+              <div className="w-full">
+                <div className="flex justify-between   flex-wrap xl:justify-between sm:justify-center  mb-5  gap-4">
+                  <h1 className="text-center title-2 ">Your NFTs</h1>
+                  <RefreshButton onClick={refreshAll} />
+                  {!wallets?.ltcWallet ||
+                  !wallets?.ckbWallet ||
+                  !wallets?.kdaWallet ? (
+                    <>
+                      <Button className="px-6 bg-yellow-500 " active={false}>
+                        Add all Wallets
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="flex justify-between w-full">
+                      <ClaimableTokens
+                        nftsNotClaimed={nftsNotClaimed}
+                        address={address}
+                        nftsNotClaimedBoost={nftsNotClaimedBoost}
                       />
-                    </Card>
-
-                    <Card
-                      className="max-sm:flex-col max-sm:justify-center max-sm:text-center max-sm:gap-y-3 flex-shrink-0 transition bg-gray-400 rounded-2xl p-4 md:p-6 flex items-center gap-x-5 relative"
-                      key={"index1"}
-                    >
-                      <VerifyKDAWallet
-                        kdaWallet={wallets?.kdaWallet}
-                        unfts={userAmNft}
-                      />
-                    </Card>
-
-                    <Card
-                      className="max-sm:flex-col max-sm:justify-center max-sm:text-center max-sm:gap-y-3 flex-shrink-0 transition bg-gray-400 rounded-2xl p-4 md:p-6 flex items-center gap-x-5 relative"
-                      key={"index2"}
-                    >
-                      <VerifyCKBWallet
-                        ckbWallet={wallets?.ckbWallet}
-                        unfts={userAmNft}
-                      />
-                    </Card>
-                  </div>
+                      <div>
+                        {nftsNotClaimed || nftsNotClaimedBoost ? (
+                          <div className="flex gap-2 align-middle">
+                            <Button className="px-6 " onClick={handleClaim}>
+                              {isSendingRequest ? (
+                                <>Sending...</>
+                              ) : (
+                                "Send Claim Request"
+                              )}
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2 align-middle">
+                            <Button className="px-6 bg-primary " active={false}>
+                              Claimed
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <ClaimRewardHistory
-                  loading={loading}
-                  payouts={payouts}
-                  txData={txData}
+                <NFTCollectionTabs
+                  isNftsLoading={isNftsLoading}
+                  userAmNft={userAmNft}
+                  userAmBoostNft={userAmBoostNft}
                 />
+
+                <div className="grid grid-cols-1 2xl:grid-cols-3 gap-8">
+                  <div>
+                    <div className="flex-wrap flex justify-between items-center mb-4 sm:mb-6 gap-x-2">
+                      <h2 className="title-2">Verifications</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-1 gap-6 flex-wrap">
+                      <Card
+                        className="max-sm:flex-col max-sm:justify-center max-sm:text-center max-sm:gap-y-3 flex-shrink-0 transition bg-gray-400 rounded-2xl p-4 md:p-6 flex items-center gap-x-5 relative"
+                        key={"index"}
+                      >
+                        <VerifyLTCWallet
+                          ltcWallet={wallets?.ltcWallet}
+                          unfts={userAmNft}
+                        />
+                      </Card>
+
+                      <Card
+                        className="max-sm:flex-col max-sm:justify-center max-sm:text-center max-sm:gap-y-3 flex-shrink-0 transition bg-gray-400 rounded-2xl p-4 md:p-6 flex items-center gap-x-5 relative"
+                        key={"index1"}
+                      >
+                        <VerifyKDAWallet
+                          kdaWallet={wallets?.kdaWallet}
+                          unfts={userAmNft}
+                        />
+                      </Card>
+
+                      <Card
+                        className="max-sm:flex-col max-sm:justify-center max-sm:text-center max-sm:gap-y-3 flex-shrink-0 transition bg-gray-400 rounded-2xl p-4 md:p-6 flex items-center gap-x-5 relative"
+                        key={"index2"}
+                      >
+                        <VerifyCKBWallet
+                          ckbWallet={wallets?.ckbWallet}
+                          unfts={userAmNft}
+                        />
+                      </Card>
+                    </div>
+                  </div>
+
+                  <ClaimRewardHistory
+                    loading={loading}
+                    payouts={payouts}
+                    txData={txData}
+                  />
+                </div>
               </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="flex justify-center align-middle">
+              {" "}
+              Connect Your Wallet
             </div>
-          )}
-        </>
-      ) : (
-        <>
-          <div className="flex justify-center align-middle">
-            {" "}
-            Connect Your Wallet
-          </div>
-        </>
-      )}
-    </MainLayout>
+          </>
+        )}
+      </MainLayout>
+    </>
   );
 };
 
