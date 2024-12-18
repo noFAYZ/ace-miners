@@ -13,12 +13,13 @@ import {
   IconTriangleUp,
 } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
-import { Card } from "@/components/Ui";
-import { IconCheck, IconError, IconSpinner } from "@/components/Ui/Snippets";
+import { Card } from "@/components/ui";
+import { IconCheck, IconError, IconSpinner } from "@/components/ui/Snippets";
 import {
   aceMinerContracts,
   alchemySettings,
   chainURL,
+  contrAceMinersBoost,
   contrAceMinersPhase1,
   contrAceMinersPhase2,
 } from "@/constant/consonants";
@@ -40,6 +41,8 @@ import { BigNumber } from "ethers";
 import { useEffect, useRef, useState } from "react";
 import CONTRACTA from "../constant/ABI_ACEMINERS1.json";
 
+import NFTCollectionTabs from "@/components/NFTTabs";
+
 const HomePage = ({ ip }) => {
   let address = useAddress();
 
@@ -47,9 +50,11 @@ const HomePage = ({ ip }) => {
   const [ltcStatus, setltcStatus] = useState(""); //error,verified,verifing,verify
   const [ckbStatus, setckbStatus] = useState(""); //error,verified,verifing,verify
   const [userAmNft, setuserAmNft] = useState([]);
+  const [userAmBoostNft, setuserAmBoostNft] = useState([]);
   const [nftsNotClaimed, setnftsNotClaimed] = useState([]);
-  const [nftsNotClaimedD2, setnftsNotClaimedD2] = useState([]);
+  const [nftsNotClaimedBoost, setnftsNotClaimedBoost] = useState([]);
   const [claimData, setclaimData] = useState([{}]);
+  const [claimDataBoost, setclaimDataBoost] = useState([{}]);
   const [dropData, setdropData] = useState([{}]);
   const [ltcWallet, setltcWallet] = useState();
   const [kdaWallet, setkdaWallet] = useState();
@@ -63,7 +68,7 @@ const HomePage = ({ ip }) => {
 
   const [loading, setloading] = useState(false);
   const [payouts, setpayouts] = useState([]);
-
+  const [calculating, setcalculating] = useState(false);
   const alchemy = new Alchemy(alchemySettings);
 
   const getVerifications = () => {
@@ -79,10 +84,17 @@ const HomePage = ({ ip }) => {
     setisNftsLoading(true);
     let amP1NFTs = [];
     let amP2NFTs = [];
+    let amBoostNFTs = [];
     let allHoldingNfts = [];
     try {
       // Get the async iterable for the owner's NFTs.
-      const nftsIterable = alchemy.nft.getNftsForOwnerIterator(adr);
+      const nftsIterable = alchemy.nft.getNftsForOwnerIterator(adr, {
+        contractAddresses: [
+          contrAceMinersPhase1,
+          contrAceMinersPhase2,
+          contrAceMinersBoost,
+        ],
+      });
 
       // Iterate over the NFTs and add them to the nfts array.
       for await (const nft of nftsIterable) {
@@ -99,6 +111,13 @@ const HomePage = ({ ip }) => {
         ) {
           amP2NFTs.push(nft);
         }
+
+        if (
+          nft.contract.address.toLowerCase() ==
+          contrAceMinersBoost.toLowerCase()
+        ) {
+          amBoostNFTs.push(nft);
+        }
       }
 
       // Log the NFTs.
@@ -109,6 +128,7 @@ const HomePage = ({ ip }) => {
     allHoldingNfts = amP1NFTs.concat(amP2NFTs);
 
     setuserAmNft(allHoldingNfts);
+    setuserAmBoostNft(amBoostNFTs);
     setisNftsLoading(false);
 
     return allHoldingNfts;
@@ -154,39 +174,6 @@ const HomePage = ({ ip }) => {
     return filteredArr;
   }
 
-  const getPayouts = async () => {
-    setloading(true);
-    try {
-      let payoutsLs = [];
-      const respo = await fetch("/api/claim-data", {
-        method: "GET",
-      });
-      const content = await respo.json();
-
-      const filteredArray = content.filter(
-        (item) => item.holderEthAddress === address
-      );
-
-      const getTxhashes = await fetch("api/tx-data", {
-        method: "GET",
-      });
-
-      const getTxhashesData = await getTxhashes.json();
-
-      settxData(getTxhashesData);
-
-      const claimRequests = getUniquePropertyValues(filteredArray);
-
-      setpayouts(claimRequests);
-
-      setloading(false);
-    } catch (e) {
-      console.log(e);
-      setloading(false);
-    }
-    setloading(false);
-  };
-
   function getUniquePropertyValues(jsonArray) {
     const uniqueValues = new Set();
     const resultArray = [];
@@ -224,16 +211,19 @@ const HomePage = ({ ip }) => {
     return resultArray;
   }
 
-  useEffect(() => {
-    getPayouts();
-  }, []);
-
+  // Fetches NFTs from Alchemy when the user's address is available
   useEffect(() => {
     if (address) {
       getNFTsFromAlchemy(address);
     }
   }, [address]);
 
+  // Initializes user data when address is available:
+  // 1. Fetches wallet addresses (LTC, KDA, CKB)
+  // 2. Fetches claim data for regular NFTs
+  // 3. Fetches claim data for boost NFTs
+  // 4. Fetches drop data
+  // 5. Verifies wallet connections
   useEffect(() => {
     if (address) {
       const getWallets = async () => {
@@ -265,6 +255,18 @@ const HomePage = ({ ip }) => {
           console.error(error);
         }
       };
+
+      const getClaimDataBoost = async () => {
+        try {
+          const response = await fetch("/api/claim-data-boost");
+          const data = await response.json();
+
+          setclaimDataBoost(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       const getDropData = async () => {
         try {
           const response = await fetch("/api/drop");
@@ -279,11 +281,42 @@ const HomePage = ({ ip }) => {
       getWallets();
       getDropData();
       getClaimData();
+      getClaimDataBoost();
       getVerifications();
     }
   }, [address]);
 
+  const calculateRewards2 = (userNfts, claimData, dropId) =>
+    userNfts.reduce((acc, nft) => {
+      const isAlreadyClaimed = claimData?.some(
+        (claim) =>
+          claim.contractAddress?.toLowerCase() ===
+            nft.contract.address.toLowerCase() &&
+          claim.nftId === parseInt(nft.tokenId) &&
+          claim.isClaimed &&
+          claim.dropId === dropId
+      );
+
+      return isAlreadyClaimed
+        ? acc
+        : [
+            ...acc,
+            {
+              nftId: nft.tokenId,
+              nftContractAddress: nft.contract.address,
+              dropId,
+            },
+          ];
+    }, []);
+
+  // Calculates unclaimed rewards for both regular and boost NFTs
+  // Runs when:
+  // - User's NFTs change
+  // - Claim data updates
+  // - A new claim is sent
+  // Creates arrays of unclaimed NFTs for each drop
   useEffect(() => {
+    setcalculating(true);
     const calculateRewards = (_dropId) => {
       let nftsNotClaimedArray = [];
 
@@ -318,6 +351,7 @@ const HomePage = ({ ip }) => {
     };
 
     let nftsNotClaimedAllDrops = [];
+    let nftsNotClaimedAllDropsBoost = [];
 
     if (dropData.length > 0) {
       dropData?.forEach((_drop) => {
@@ -326,14 +360,64 @@ const HomePage = ({ ip }) => {
           nfts: calculateRewards(_drop.dropId),
           holderAddress: address,
         });
+
+        if (_drop.dropId > 7) {
+          nftsNotClaimedAllDropsBoost.push({
+            drop_id: _drop,
+            nfts: calculateRewards2(userAmBoostNft, claimData, _drop),
+            holderAddress: address,
+          });
+        }
       });
     }
-    console.log(nftsNotClaimedAllDrops);
+
+    setcalculating(false);
+
+    console.log("NFTS Not Claimed Boost: ", nftsNotClaimedAllDropsBoost);
+    console.log("NFTS Not Claimed: ", nftsNotClaimedAllDrops);
 
     setnftsNotClaimed(nftsNotClaimedAllDrops);
-
+    setnftsNotClaimedBoost(nftsNotClaimedAllDropsBoost);
     setIsClaimSent(false);
   }, [userAmNft, claimData, isClaimSent]);
+
+  // Fetches and processes payout/transaction data for the user
+  // Updates when:
+  // - Claim data changes
+  // - Boost claim data changes
+  // - User address changes
+  // Retrieves transaction hashes and organizes claim requests
+  useEffect(() => {
+    const getPayouts = async () => {
+      setloading(true);
+      if (claimData) {
+        try {
+          const filteredArray = claimData.filter(
+            (item) => item.holderEthAddress === address
+          );
+
+          const getTxhashes = await fetch(`/api/tx-data?address=${address}`, {
+            method: "GET",
+          });
+
+          const getTxhashesData = await getTxhashes.json();
+
+          settxData(getTxhashesData);
+
+          const claimRequests = getUniquePropertyValues(filteredArray);
+
+          setpayouts(claimRequests);
+
+          setloading(false);
+        } catch (e) {
+          console.log(e);
+          setloading(false);
+        }
+      }
+      setloading(false);
+    };
+    getPayouts();
+  }, [claimData, claimDataBoost, address]);
 
   return (
     <MainLayout>
@@ -350,55 +434,64 @@ const HomePage = ({ ip }) => {
               </>
             ) : (
               <>
-                {" "}
-                {(address &&
-                  nftsNotClaimed?.length > 0 &&
-                  nftsNotClaimed[0]?.nfts?.length > 0) ||
-                (address &&
-                  nftsNotClaimed?.length > 0 &&
-                  nftsNotClaimed[1]?.nfts?.length > 0) ||
-                (address &&
-                  nftsNotClaimed?.length &&
-                  nftsNotClaimed[2]?.nfts?.length > 0) ||
-                (address &&
-                  nftsNotClaimed?.length &&
-                  nftsNotClaimed[3]?.nfts?.length > 0) ||
-                (address &&
-                  nftsNotClaimed?.length &&
-                  nftsNotClaimed[4]?.nfts?.length > 0) ||
-                (address &&
-                  nftsNotClaimed?.length &&
-                  nftsNotClaimed[5]?.nfts?.length > 0) ||
-                (address &&
-                  nftsNotClaimed?.length &&
-                  nftsNotClaimed[6]?.nfts?.length > 0) ||
-                (address &&
-                  nftsNotClaimed?.length &&
-                  nftsNotClaimed[7]?.nfts?.length > 0)  ? (
-                  <>
-                    <ClaimableTokens
-                      nftsNotClaimed={nftsNotClaimed}
-                      address={address}
-                    />
-
-                    <div className="flex gap-2 align-middle">
-                      <Button className="px-6 " onClick={handleClaim}>
-                        {isSendingRequest ? (
-                          <>Sending...</>
-                        ) : (
-                          "Send Claim Request"
-                        )}
-                      </Button>
-                    </div>
-                  </>
+                {calculating ? (
+                  "calculating"
                 ) : (
                   <>
-                    {" "}
-                    <div className="flex gap-2 align-middle">
-                      <Button className="px-6 bg-primary " active={false}>
-                        Claimed
-                      </Button>
-                    </div>
+                    {(address &&
+                      nftsNotClaimed?.length > 0 &&
+                      nftsNotClaimed[0]?.nfts?.length > 0) ||
+                    (address &&
+                      nftsNotClaimed?.length > 0 &&
+                      nftsNotClaimed[1]?.nfts?.length > 0) ||
+                    (address &&
+                      nftsNotClaimed?.length &&
+                      nftsNotClaimed[2]?.nfts?.length > 0) ||
+                    (address &&
+                      nftsNotClaimed?.length &&
+                      nftsNotClaimed[3]?.nfts?.length > 0) ||
+                    (address &&
+                      nftsNotClaimed?.length &&
+                      nftsNotClaimed[4]?.nfts?.length > 0) ||
+                    (address &&
+                      nftsNotClaimed?.length &&
+                      nftsNotClaimed[5]?.nfts?.length > 0) ||
+                    (address &&
+                      nftsNotClaimed?.length &&
+                      nftsNotClaimed[6]?.nfts?.length > 0) ||
+                    (address &&
+                      nftsNotClaimed?.length &&
+                      nftsNotClaimed[7]?.nfts?.length > 0) ||
+                    (address &&
+                      nftsNotClaimed?.length &&
+                      nftsNotClaimed[8]?.nfts?.length > 0) ? (
+                      <>
+                        <ClaimableTokens
+                          nftsNotClaimed={nftsNotClaimed}
+                          address={address}
+                          nftsNotClaimedBoost={nftsNotClaimedBoost}
+                        />
+
+                        <div className="flex gap-2 align-middle">
+                          <Button className="px-6 " onClick={handleClaim}>
+                            {isSendingRequest ? (
+                              <>Sending...</>
+                            ) : (
+                              "Send Claim Request"
+                            )}
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {" "}
+                        <div className="flex gap-2 align-middle">
+                          <Button className="px-6 bg-primary " active={false}>
+                            Claimed
+                          </Button>
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
               </>
@@ -458,64 +551,11 @@ const HomePage = ({ ip }) => {
             </div>
           </div>
 
-          {isNftsLoading ? (
-            <>
-              <div className="flex justify-center items-start text-center align-middle my-40">
-                {" "}
-                Loading....
-              </div>
-            </>
-          ) : (
-            <>
-              {" "}
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6 mb-12">
-                {!userAmNft.length ? (
-                  <>
-                    <Card
-                      className="border col-span-5 border-gray-400 p-2 flex-shrink-0 bg-gray-500 text-center"
-                      key={"index"}
-                    >
-                      {/* <img
-                className="w-full aspect-[4/5] rounded-3xl object-cover object-center mb-2"
-                // src={`/images/dummy-image-${item}.png`}
-                src={item.image_url}
-                alt=""
-              /> */}
-                      <div className="mt-4 mb-3">
-                        {/* <h2 className="title-3">No Data</h2> */}
-                        <p className="text-14 text-gray-200">No Data!</p>
-                      </div>
-                    </Card>
-                  </>
-                ) : (
-                  <></>
-                )}
-                {userAmNft.map((item, index) => (
-                  <Card
-                    className="border border-gray-400 p-2 flex-shrink-0 bg-gray-500 text-center"
-                    key={index}
-                  >
-                    <img
-                      className="w-full aspect-[4/5] rounded-3xl object-cover object-center mb-2"
-                      // src={`https:///images/dummy-image-${item}.png`}
-                      src={item?.rawMetadata?.image?.replace(
-                        "ipfs://",
-                        "https://ipfs.io/ipfs/"
-                      )}
-                      // src={item.image}
-                      alt={item?.rawMetadata?.image}
-                    />
-                    <div className="mt-4 mb-3">
-                      <h2 className="title-3">{item.title}</h2>
-                      <p className="text-14 text-gray-200">
-                        {item.description}
-                      </p>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </>
-          )}
+          <NFTCollectionTabs
+            isNftsLoading={isNftsLoading}
+            userAmNft={userAmNft}
+            userAmBoostNft={userAmBoostNft}
+          />
 
           <div className="grid grid-cols-1 2xl:grid-cols-3 gap-8">
             <div>
@@ -612,20 +652,20 @@ const HomePage = ({ ip }) => {
                       </span>
 
                       <div className="flex flex-wrap gap-1">
-                        <span className=" my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
+                        <span className=" h-fit my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
                           <span className="bg-primary rounded-full px-2">
                             {item.totalLtc.toFixed(4)}{" "}
                           </span>{" "}
                           <IconLTC width={20} />
                         </span>
 
-                        <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
+                        <span className="h-fit my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
                           <span className="bg-primary rounded-full px-2">
                             {item.totalKda.toFixed(2)}{" "}
                           </span>
                           <IconKDA width={14} />
                         </span>
-                        <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
+                        <span className="h-fit my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
                           <span className="bg-primary rounded-full px-2">
                             {item.totalCkb.toFixed(0)}{" "}
                           </span>{" "}
@@ -634,11 +674,11 @@ const HomePage = ({ ip }) => {
                       </div>
                     </span>
 
-                    <span className="col-span-2 flex justify-center  align-middle items-center  gap-1">
-                      {txData.map((tx) => {
+                    <span className="col-span-2 flex justify-center flex-wrap  align-middle items-center  gap-1">
+                      {txData.map((tx, index) => {
                         if (tx?.claimRequestId === item?.claimRequestId) {
                           return (
-                            <>
+                            <div className="flex flex-wrap gap-1" key={index}>
                               {tx?.LTC ? (
                                 <>
                                   <Link
@@ -719,7 +759,7 @@ const HomePage = ({ ip }) => {
                               ) : (
                                 <></>
                               )}
-                            </>
+                            </div>
                           );
                         }
 

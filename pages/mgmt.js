@@ -1,7 +1,7 @@
 import { Button } from "@/components/Form";
 import { IconArrowRight } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
-import { Card } from "@/components/Ui";
+import { Card } from "@/components/ui";
 import { contrAceMinersPhase1, contrWETH } from "@/constant/consonants";
 import { useAddress, useSigner } from "@thirdweb-dev/react";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";

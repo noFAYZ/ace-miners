@@ -24,11 +24,12 @@ model UserData {
 }
 
 model DropData {
-  id      String @id @unique @default(cuid())
-  dropId  Int    @unique @default(autoincrement())
-  eachLTC String
-  eachKDA String
-  eachCKB String
+  id           String  @id @unique @default(cuid())
+  dropId       Int     @unique @default(autoincrement())
+  eachLTC      String
+  eachKDA      String
+  eachCKB      String
+  eachBoostLTC String?
 }
 
 model Nft {
@@ -76,11 +77,111 @@ model ClaimRequestStatus {
   @@index([claimRequestId])
 }
 
+model ClaimRequestsBoost {
+  id               String  @id @unique @default(cuid())
+  claimRequestId   String
+  nftId            Int
+  contractAddress  String
+  isClaimed        Boolean
+  requestStatus    String
+  holderEthAddress String
+  dropId           Int
+  eachLTC          String
+  eachKDA          String
+  eachCKB          String
+
+  @@index([claimRequestId])
+}
+
 model MiningData {
-  id      String @id @unique @default(cuid())
-  stat  Int    @unique @default(autoincrement())
-  LTC String
-  KDA String
-  CKB String
-   @@index([stat])
+  id   String @id @unique @default(cuid())
+  stat Int    @unique @default(autoincrement())
+  LTC  String
+  KDA  String
+  CKB  String
+
+  @@index([stat])
+}
+
+model BlacklistStatusKaspa {
+  id                       Int     @id @unique @default(autoincrement())
+  nftId                    Int
+  isBlacklisted            Boolean
+  aceMinersContractAddress String
+}
+
+model UserDataKaspa {
+  id          Int     @id @unique @default(autoincrement())
+  ethAddress  String  @unique
+  kaspaWallet String?
+}
+
+model DropDataKaspa {
+  id            String  @id @unique @default(cuid())
+  dropId        Int     @unique @default(autoincrement())
+  eachKAS       String
+  eachBoostKAS  String?
+  eachBoost2KAS String?
+}
+
+model ClaimRequestsKaspa {
+  id               String  @id @unique @default(cuid())
+  claimRequestId   String
+  nftId            Int
+  contractAddress  String
+  isClaimed        Boolean
+  requestStatus    String
+  holderEthAddress String
+  dropId           Int
+  eachKAS          String
+
+  @@index([claimRequestId])
+}
+
+model ClaimRequestStatusKaspa {
+  id               String  @id @unique @default(cuid())
+  claimRequestId   String  @unique
+  requestStatus    String
+  holderEthAddress String
+  KAS              Boolean
+  KasHash          String?
+
+  @@index([claimRequestId])
+}
+
+model MiningDataKaspa {
+  id       String  @id @unique @default(cuid())
+  stat     Int     @unique @default(autoincrement())
+  KAS      String
+  KASturbo String?
+
+  @@index([stat])
+}
+
+model ClaimRequestsBoostKaspa {
+  id               String  @id @unique
+  claimRequestId   String
+  nftId            Int
+  contractAddress  String
+  isClaimed        Boolean
+  requestStatus    String
+  holderEthAddress String
+  dropId           Int
+  eachKAS          String
+
+  @@index([claimRequestId])
+}
+
+model ClaimRequestsBoost2Kaspa {
+  id               String  @id @unique
+  claimRequestId   String
+  nftId            Int
+  contractAddress  String
+  isClaimed        Boolean
+  requestStatus    String
+  holderEthAddress String
+  dropId           Int
+  eachKAS          String
+
+  @@index([claimRequestId])
 }

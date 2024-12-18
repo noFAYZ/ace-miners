@@ -12,19 +12,20 @@ export default async function handler(req, res) {
 
         try {
 
-            if (body.dropId) {
-                const user = await prisma.dropData.upsert({
-                    where: { dropId: parseInt(body.dropId) },
-                    update: body,
-                    create: body,
-                })
-                console.log("Drop iD:", body.dropId);
-                return res.status(200).json({ status: "SUCCESS LTC" });
+            if (!body.dropId) {
+                return res.status(500).json({ status: "No Drop Id Provided" });
             }
 
 
+            const user = await prisma.dropData.upsert({
+                where: { dropId: parseInt(body.dropId) },
+                update: body,
+                create: body,
+            })
 
-            return res.status(200).json({ status: "SUCCESS" });
+            console.log("Drop iD:", body.dropId);
+            return res.status(200).json({ status: "SUCCESS Adding Drop Data" });
+
 
         } catch (e) {
             console.log(e);

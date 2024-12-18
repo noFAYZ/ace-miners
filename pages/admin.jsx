@@ -2,7 +2,7 @@ import { Button } from "@/components/Form";
 
 import { IconCKB, IconClosed, IconKDA, IconLTC } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
-import { Card } from "@/components/Ui";
+
 import { IconCheck, IconError, IconSpinner } from "@/components/Ui/Snippets";
 import {
   aceMinerContracts,
@@ -49,6 +49,7 @@ const Admin = () => {
         eachLTC: data.eachLTC,
         eachKDA: data.eachKDA,
         eachCKB: data.eachCKB,
+        eachBoostLTC: data.ltcBoost,
       };
 
       await addDropData(convertedData);
@@ -173,13 +174,13 @@ const Admin = () => {
               </h1>
             </div>
 
-            <ul className="grid grid-flow-col text-center text-gray-50 bg-gray-400 rounded-full p-1 mb-10">
+            <ul className="grid grid-flow-col text-center text-gray-50 bg-gray-400 rounded-full p-2 border mb-10">
               <li>
                 <a
                   href="#page1"
                   className={
                     selectedTab == 1
-                      ? "flex justify-center  py-4 bg-gray-500 rounded-full shadow text-gray-100"
+                      ? "flex justify-center  py-4 bg-primary rounded-full shadow text-gray-100"
                       : "flex justify-center text-gray-50 rounded-full bg-gray-400  py-4"
                   }
                   onClick={() => setselectedTab(1)}
@@ -192,8 +193,8 @@ const Admin = () => {
                   href="#page2"
                   className={
                     selectedTab == 2
-                      ? "flex justify-center  py-4 bg-gray-500 rounded-full shadow text-gray-100"
-                      : "flex justify-center text-gray-50 bg-gray-400  py-4"
+                      ? "flex justify-center  py-4 bg-primary rounded-full shadow text-gray-100"
+                      : "flex justify-center text-gray-50 bg-gray-400 rounded-full  py-4"
                   }
                   onClick={() => setselectedTab(2)}
                 >
@@ -205,7 +206,7 @@ const Admin = () => {
                   href="#page3"
                   className={
                     selectedTab == 3
-                      ? "flex justify-center  py-4  bg-gray-500 rounded-full shadow text-gray-100"
+                      ? "flex justify-center  py-4  bg-primary rounded-full shadow text-gray-100"
                       : "flex justify-center rounded-full text-gray-50 bg-gray-400  py-4"
                   }
                   onClick={() => setselectedTab(3)}
@@ -382,30 +383,32 @@ export const ActiveTabContent = (props) => {
   if (props.selectedTab == 1)
     return (
       <>
-        <div className="flex justify-center pt-10">
+        <div className="flex justify-center"></div>
+
+        <div className="flex justify-center ">
           {totalClaimed ? (
             <>
-              <div className="flex flex-auto flex-wrap justify-center mb-10 gap-4 p-10 flex-grow lg:w-3/2">
+              <div className="flex flex-auto flex-wrap justify-center mb-5 gap-4 p-5 flex-grow w-full">
                 {totalClaimed?.map((item, index) => (
                   <div
                     key={index}
-                    className="flex flex-wrap justify-center gap-2 bg-black rounded-2xl p-10"
+                    className="flex flex-wrap justify-center gap-2 bg-black rounded-2xl p-5"
                   >
                     <p className="flex flex-col justify-center">
                       Reward:{" "}
-                      <span className=" bg-white text-black font-700 font-bold rounded-md px-1 flex justify-center">
+                      <span className=" bg-white text-black font-700 font-bold rounded-lg px-1 flex justify-center">
                         {index + 1}
                       </span>
                     </p>
                     <p className="flex flex-col justify-center">
                       P1 NFTs Claimed:{" "}
-                      <span className="bg-green-900 rounded-md px-1 flex justify-center">
+                      <span className="bg-blue-900 rounded-lg px-1 flex justify-center">
                         {item?.totalClaimed1}/500
                       </span>
                     </p>
                     <p className="flex flex-col justify-center">
                       P2 NFTs Claimed:{" "}
-                      <span className="bg-green-900 rounded-md px-1 flex justify-center">
+                      <span className="bg-blue-900 rounded-lg px-1 flex justify-center">
                         {item.totalClaimed2}/1500
                       </span>
                     </p>
@@ -421,142 +424,165 @@ export const ActiveTabContent = (props) => {
             </>
           )}
         </div>
-        <div className="flex justify-center pt-10">Wallet Balance</div>
-        <div className="flex justify-center py-2">
-          LTC Balance: {ltcBalance}
-        </div>
-        <div className="flex flex-wrap justify-center gap-5 mb-10">
-          <div className=" flex  ">
-            <div className="p-4 border-2 border-gray-400 rounded-xl">
-              <div className="text-center mb-4">Reward Add tool</div>
+
+        <div className="border-b-2 border-gray-200 mx-20 my-10"></div>
+
+        <div className="flex  justify-center ">
+          <div className=" flex justify-center  w-1/3 ">
+            <div className="p-4 rounded-[3rem]">
+              <div className="flex justify-center pt-2">Wallet Balance</div>
+              <div className="flex justify-center py-2 mb-2 bg-primary rounded-2xl">
+                LTC Balance: {ltcBalance}
+              </div>
+
               <form
                 onSubmit={props.handleSubmit(props.onSubmit)}
-                className="flex flex-col align-middle justify-center gap-4"
+                className="flex flex-col align-middle justify-center gap-6 p-6 bg-black rounded-[2rem] shadow-lg"
               >
-                <div className="flex gap-2 items-center">
-                  {" "}
-                  <span>Drop ID#</span>
+                <h2 className="text-xl font-semibold text-white text-center mb-4">
+                  Add Drop Data
+                </h2>
+
+                <div className="flex gap-4 items-center">
+                  <span className="text-white">Drop ID#</span>
                   <input
                     type="number"
                     {...props.register("dropId")}
                     placeholder="Drop Id: i.e 1"
-                    className="px-4 py-1 rounded-md"
+                    className="flex-1 px-4 py-2 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     min="1"
                   />
                 </div>
 
-                <div className="flex gap-2 items-center">
-                  <span>LTC/NFT</span>
+                <div className="flex gap-4 items-center">
+                  <span className="text-white">LTC/NFT</span>
                   <input
-                    type="decimal"
+                    type="number"
                     {...props.register("eachLTC", { min: 0.0, max: 10000 })}
                     placeholder="LTC / NFT: i.e 5"
-                    className="px-4 py-1 rounded-md"
+                    className="flex-1 px-4 py-2 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     min="0"
+                    step="0.01"
                   />
                 </div>
 
-                <div className="flex gap-2 items-center">
-                  {" "}
-                  <span>KDA/NFT</span>
+                <div className="flex gap-4 items-center">
+                  <span className="text-white">KDA/NFT</span>
                   <input
-                    type="decimal"
+                    type="number"
                     {...props.register("eachKDA", { min: 0.0, max: 10000 })}
                     placeholder="KDA / NFT: i.e 7"
-                    className="px-4 py-1 rounded-md"
+                    className="flex-1 px-4 py-2 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     min="0"
                   />
                 </div>
 
-                <div className="flex gap-2 items-center">
-                  {" "}
-                  <span>CKB/NFT</span>
+                <div className="flex gap-4 items-center">
+                  <span className="text-white">CKB/NFT</span>
                   <input
-                    type="decimal"
+                    type="number"
                     {...props.register("eachCKB", { min: 0.0, max: 10000 })}
                     placeholder="CKB / NFT: i.e 7"
-                    className="px-4 py-1 rounded-md"
+                    className="flex-1 px-4 py-2 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
-                <Button type="submit">
+                <div className="flex gap-4 items-center">
+                  <span className="text-white">LTC Boost</span>
+                  <input
+                    type="number"
+                    {...props.register("ltcBoost", { min: 0.0, max: 10000 })}
+                    placeholder="LTC Boost: i.e 2"
+                    className="flex-1 px-4 py-2 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-2xl transition duration-200"
+                >
                   {props.isLoading ? (
-                    <>
-                      <div className="flex justify-center">
-                        {" "}
-                        <IconSpinner></IconSpinner>Submiting..
-                      </div>
-                    </>
+                    <div className="flex justify-center">
+                      <IconSpinner className="animate-spin mr-2" />{" "}
+                      Submitting...
+                    </div>
                   ) : (
-                    <> Submit </>
+                    <>Submit</>
                   )}
                 </Button>
               </form>
             </div>
           </div>
 
-          <div className="flex flex-auto ">
-            <div className="flex flex-auto flex-wrap justify-center gap-2 my-10">
-              {props.isLoading || props.isDeletingDrop ? (
-                <>
-                  <div className="flex justify-center">
-                    {" "}
-                    <IconSpinner></IconSpinner>
-                  </div>
-                </>
-              ) : (
-                <>
-                  {props?.dropData?.map((item, index) => (
-                    <div
-                      className="bg-gray-400 text-white w-full max-w-md border border-gray-600 flex flex-col rounded-xl shadow-lg p-4 h-fit relative" // Add relative positioning
-                      key={index}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="rounded-full w-4 h-4 border-2 border-purple-500" />
-                          <div className="text-md font-bold">
-                            Reward# {item.dropId}
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <div className="flex flex-wrap gap-1">
-                            <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                              <span className="bg-primary rounded-full px-2">
-                                {parseFloat(item?.eachLTC)?.toFixed(4)}{" "}
-                              </span>{" "}
-                              <IconLTC width={20} />
-                            </span>
-
-                            <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                              <span className="bg-primary rounded-full px-2">
-                                {parseFloat(item?.eachKDA)?.toFixed(2)}{" "}
-                              </span>
-                              <IconKDA width={14} />
-                            </span>
-                            <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                              <span className="bg-primary rounded-full px-2">
-                                {parseFloat(item?.eachCKB)?.toFixed(0)}{" "}
-                              </span>{" "}
-                              <IconCKB width={18} />
-                            </span>
-                          </div>
+          <div className="flex flex-wrap gap-5 pt-10 justify-center w-2/3 ">
+            {props.isLoading || props.isDeletingDrop ? (
+              <>
+                <div className="flex justify-center">
+                  {" "}
+                  <IconSpinner></IconSpinner>
+                </div>
+              </>
+            ) : (
+              <>
+                {props?.dropData?.map((item, index) => (
+                  <div
+                    className="bg-black text-white w-full max-w-2xl border border-gray-600 flex flex-col rounded-xl justify-between  max-h-fit shadow-lg p-4  relative" // Add relative positioning
+                    key={index}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center space-x-4">
+                        <div className="rounded-full w-4 h-4 border-2 border-purple-500" />
+                        <div className="text-md font-bold">
+                          Reward# {item.dropId}
                         </div>
                       </div>
-                      <span className="absolute top-2 right-1 transform translate-x-1/2 -translate-y-1/2">
-                        <span className=" text-white px-1 text-xs rounded-full">
-                          <button
-                            className=""
-                            onClick={() => props.onCancelDrop(item)}
-                          >
-                            <IconClosed width={25} height={25} />
-                          </button>
-                        </span>
-                      </span>
+                      <div className="flex items-center justify-center space-x-4">
+                        <div className="flex justify-center flex-wrap gap-1">
+                          <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
+                            <span className="bg-primary rounded-full px-2">
+                              {parseFloat(item?.eachLTC)?.toFixed(4)}{" "}
+                            </span>{" "}
+                            <IconLTC width={20} />
+                          </span>
+
+                          <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
+                            <span className="bg-primary rounded-full px-2">
+                              {parseFloat(item?.eachKDA)?.toFixed(2)}{" "}
+                            </span>
+                            <IconKDA width={14} />
+                          </span>
+                          <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
+                            <span className="bg-primary rounded-full px-2">
+                              {parseFloat(item?.eachCKB)?.toFixed(0)}{" "}
+                            </span>{" "}
+                            <IconCKB width={18} />
+                          </span>
+                          {item?.eachBoostLTC ? (
+                            <span className="my-3 pr-1 flex gap-1 bg-red-200 text-white font-300 rounded-full">
+                              <span className="bg-primary rounded-full px-2">
+                                {parseFloat(item?.eachBoostLTC)?.toFixed(4)}{" "}
+                              </span>{" "}
+                              <IconLTC width={20} /> Boost
+                            </span>
+                          ) : null}
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </>
-              )}
-            </div>
+                    <span className="absolute top-2 right-1 transform translate-x-1/2 -translate-y-1/2">
+                      <span className=" text-white px-1 text-xs rounded-full">
+                        <button
+                          className=""
+                          onClick={() => props.onCancelDrop(item)}
+                        >
+                          <IconClosed width={25} height={25} />
+                        </button>
+                      </span>
+                    </span>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         </div>
       </>

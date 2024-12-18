@@ -1,12 +1,12 @@
 import { Button } from "@/components/Form";
-import { Card } from "@/components/Ui";
+import { Card } from "@/components/ui";
 import { useAddress } from "@thirdweb-dev/react";
 import Head from "next/head";
 import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 /* This example requires Tailwind CSS v2.0+ */
-import { IconCheck, IconError, IconSpinner } from "@/components/Ui/Snippets";
+import { IconCheck, IconError, IconSpinner } from "@/components/ui/Snippets";
 import {
   alchemySettings,
   contrAceMinersPhase1,
@@ -27,7 +27,6 @@ import { Alchemy } from "alchemy-sdk";
 const WAValidator = require("multicoin-address-validator");
 
 import {
-
   IconCKB,
 
   IconKDA,
@@ -192,7 +191,7 @@ export function VerifyLTCWallet(props) {
                 }
                 target="_blank"
               >
-                {ltcWallet ? <>{ltcWallet?.slice(0, 20)}...</> : <> {props.ltcWallet?.slice(0, 20)}...</>}
+                {ltcWallet ? <>{ltcWallet?.slice(0, 16)}...</> : <> {props.ltcWallet?.slice(0, 16)}...</>}
 
 
               </a>
@@ -504,7 +503,7 @@ export function VerifyKDAWallet(props) {
                 }
                 target="_blank"
               >
-                {kdaWallet ? <>{kdaWallet?.slice(0, 20)}...</> : <> {props?.kdaWallet?.slice(0, 20)}...</>}
+                {kdaWallet ? <>{kdaWallet?.slice(0, 16)}...</> : <> {props?.kdaWallet?.slice(0, 20)}...</>}
 
 
               </a>
@@ -814,7 +813,7 @@ export function VerifyCKBWallet(props) {
                 }
                 target="_blank"
               >
-                {ckbWallet ? <>{ckbWallet?.slice(0, 20)}...</> : <> {props?.ckbWallet?.slice(0, 20)}...</>}
+                {ckbWallet ? <>{ckbWallet?.slice(0, 16)}...</> : <> {props?.ckbWallet?.slice(0, 16)}...</>}
 
 
               </a>

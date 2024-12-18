@@ -7,11 +7,12 @@ export default async function handler(req, res) {
 
 
 
+
     if (req.method == "GET") {
-        console.log("API: Get Claim Data")
+        console.log("Get Boost Claim Data")
 
         try {
-            const claimData = await prisma.claimRequests.findMany()
+            const claimData = await prisma.claimRequestsBoost.findMany()
 
             return res.status(200).json(claimData);
 

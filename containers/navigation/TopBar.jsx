@@ -7,7 +7,7 @@ import {
   Logo,
   LogoIcon,
 } from "@/components/Icon";
-import { Avatar } from "@/components/Ui";
+import { Avatar } from "@/components/ui";
 import { MenuContext } from "@/context/menuContext";
 import { ConnectWallet } from "@thirdweb-dev/react";
 import Link from "next/link";
