@@ -1,6 +1,6 @@
 // ClaimRewardHistory.jsx
 import { IconCKB, IconKDA, IconLTC } from "@/components/Icon";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/Ui/Card";
 import { Link } from "next/link";
 import React, { memo } from "react";
 // Header component

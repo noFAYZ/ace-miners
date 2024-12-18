@@ -1,7 +1,7 @@
 import { Button } from "@/components/Form";
 import { IconCKB, IconKDA, IconLTC } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
-import { Card } from "@/components/ui";
+import { Card } from "@/components/Ui";
 import {
   alchemySettings,
   contrAceMinersBoost,

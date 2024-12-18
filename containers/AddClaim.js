@@ -1,12 +1,12 @@
 import { Button } from "@/components/Form";
-import { Card } from "@/components/ui";
+import { Card } from "@/components/Ui";
 import { useAddress } from "@thirdweb-dev/react";
 import Head from "next/head";
 import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 /* This example requires Tailwind CSS v2.0+ */
-import { IconCheck, IconError, IconSpinner } from "@/components/ui/Snippets";
+import { IconCheck, IconError, IconSpinner } from "@/components/Ui/Snippets";
 import {
   alchemySettings,
   contrAceMinersPhase1,

@@ -10,7 +10,7 @@ import {
   IconTriangleUp,
 } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
-import { Card } from "@/components/ui";
+import { Card } from "@/components/Ui";
 import { db } from "@/helper/firebase-config";
 import { useDragScrollHook } from "@/hooks/useDragScrollHook";
 import { doc, onSnapshot } from "firebase/firestore";

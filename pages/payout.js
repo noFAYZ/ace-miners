@@ -13,7 +13,7 @@ import {
   IconTriangleUp
 } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
-import { Card } from "@/components/ui";
+import { Card } from "@/components/Ui";
 import { contrAceMinersPhase1, contrWETH } from "@/constant/consonants";
 import { ConnectWallet, useAddress, useSigner } from "@thirdweb-dev/react";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";

@@ -13,8 +13,8 @@ import {
   IconTriangleUp,
 } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
-import { Card } from "@/components/ui";
-import { IconCheck, IconError, IconSpinner } from "@/components/ui/Snippets";
+import { Card } from "@/components/Ui";
+import { IconCheck, IconError, IconSpinner } from "@/components/Ui/Snippets";
 import {
   aceMinerContracts,
   alchemySettings,

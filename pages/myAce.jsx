@@ -2,7 +2,7 @@ import CheckerModal from "@/components/checkerModal";
 import { Button } from "@/components/Form";
 import { IconSearch } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
-import { IconSpinner } from "@/components/ui/Snippets";
+import { IconSpinner } from "@/components/Ui/Snippets";
 import {
   aceMinerContracts,
   alchemySettings,
