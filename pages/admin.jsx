@@ -462,7 +462,7 @@ export const ActiveTabContent = (props) => {
                     placeholder="LTC / NFT: i.e 5"
                     className="flex-1 px-4 py-2 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     min="0"
-                    step="0.01"
+                    step="0.000001"
                   />
                 </div>
 
@@ -495,6 +495,7 @@ export const ActiveTabContent = (props) => {
                     placeholder="LTC Boost: i.e 2"
                     className="flex-1 px-4 py-2 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     min="0"
+                    step="0.000001"
                   />
                 </div>
 
