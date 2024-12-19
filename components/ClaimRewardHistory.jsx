@@ -75,7 +75,7 @@ const ClaimRow = memo(({ item, txData }) => {
       {/* Request ID */}
       <span className="col-span-2 flex justify-between items-center">
         <span className="text-gray-200 text-12 md:hidden">Request ID</span>
-        <span className="text-gray-300">
+        <span className="text-gray-100">
           {truncateAddress(item?.claimRequestId)}
         </span>
       </span>
@@ -83,7 +83,7 @@ const ClaimRow = memo(({ item, txData }) => {
       {/* Address */}
       <span className="col-span-2 flex justify-start items-center">
         <span className="text-gray-200 text-12 md:hidden">Address</span>
-        <span className="text-gray-300">
+        <span className="text-gray-100">
           {truncateAddress(item?.hodlerAddress, 12)}
         </span>
       </span>
@@ -91,7 +91,15 @@ const ClaimRow = memo(({ item, txData }) => {
       {/* Status */}
       <span className="col-span-2 flex justify-between items-center">
         <span className="text-gray-200 text-12 md:hidden">Status</span>
-        <span className="text-gray-300">{item?.status}</span>
+        <span
+          className={`px-3 py-1 rounded-full text-sm ${
+            item?.status === "completed"
+              ? "bg-green-500/20 text-green-300"
+              : "bg-yellow-500/20 text-yellow-300"
+          }`}
+        >
+          {item?.status}
+        </span>
       </span>
 
       {/* Reward Amount */}
@@ -101,6 +109,17 @@ const ClaimRow = memo(({ item, txData }) => {
           <RewardBadge amount={item.totalLtc} Icon={IconLTC} iconWidth={20} />
           <RewardBadge amount={item.totalKda} Icon={IconKDA} iconWidth={14} />
           <RewardBadge amount={item.totalCkb} Icon={IconCKB} iconWidth={18} />
+          {item?.totalBoostLtc ? (
+            <>
+              {" "}
+              <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-gray-50 font-300 rounded-full">
+                <span className="bg-red-500 rounded-full px-2">
+                  {item?.totalBoostLtc?.toFixed(4)}{" "}
+                </span>{" "}
+                <IconLTC width={18} />
+              </span>
+            </>
+          ) : null}
         </div>
       </span>
 
@@ -116,6 +135,10 @@ const ClaimRow = memo(({ item, txData }) => {
               {tx?.CKB && <TransactionLink type="CKB" hash={tx?.CkbHash} />}
             </div>
           ))}
+        {!txData.filter((tx) => tx.claimRequestId == item.claimRequestId)
+          ?.length > 0 ? (
+          <span className="text-gray-100">Not Sent Yet</span>
+        ) : null}
       </span>
 
       {/*    <span className="col-span-2 flex justify-center flex-wrap items-center gap-1">

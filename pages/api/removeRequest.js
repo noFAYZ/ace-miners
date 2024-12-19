@@ -15,7 +15,12 @@ export default async function handler(req, res) {
                     claimRequestId: item?.claimRequestId,
                 },
             })
-            console.log(removeData)
+            const removeDataBoost = await prisma.claimRequestsBoost.deleteMany({
+                where: {
+                    claimRequestId: item?.claimRequestId,
+                },
+            })
+            console.log(removeData, removeDataBoost)
 
 
             return removeData

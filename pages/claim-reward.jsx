@@ -19,6 +19,8 @@ import Link from "next/link";
 import Loader from "@/components/Loader";
 import NFTCollectionTabs from "@/components/NFTTabs";
 
+import ClaimButton from "@/components/ClaimButton";
+import ClaimRewardHistory from "@/components/ClaimRewardHistory";
 import RefreshButton from "@/components/RefreshButton";
 import ClaimableTokens from "@/containers/ClaimableTokens";
 import { useWalletData } from "@/hooks/useWalletData";
@@ -26,8 +28,6 @@ import { useAddress } from "@thirdweb-dev/react";
 import { Alchemy } from "alchemy-sdk";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-
-import ClaimRewardHistory from "@/components/ClaimRewardHistory";
 
 const HomePage = ({ ip }) => {
   let address = useAddress();
@@ -49,7 +49,7 @@ const HomePage = ({ ip }) => {
   const [nftsNotClaimed, setnftsNotClaimed] = useState([]);
   const [nftsNotClaimedBoost, setnftsNotClaimedBoost] = useState([]);
   const [payouts, setpayouts] = useState([]);
-
+  const [payoutsBoost, setPayoutsBoost] = useState([]);
   const [isNftsLoading, setisNftsLoading] = useState(false);
   const [calculating, setcalculating] = useState(false);
 
@@ -138,7 +138,6 @@ const HomePage = ({ ip }) => {
 
   useEffect(() => {
     if (!isLoading && !hasErrors) {
-      console.log(wallets, claimData, claimDataBoost, dropData, txData);
       // Process your data here
       console.log("All data loaded successfully");
     }
@@ -206,7 +205,11 @@ const HomePage = ({ ip }) => {
         if (_drop.dropId > 7) {
           nftsNotClaimedAllDropsBoost.push({
             drop_id: _drop,
-            nfts: calculateRewards2(userAmBoostNft, claimData, _drop),
+            nfts: calculateRewards2(
+              userAmBoostNft,
+              claimDataBoost,
+              _drop.dropId
+            ),
             holderAddress: address,
           });
         }
@@ -222,7 +225,7 @@ const HomePage = ({ ip }) => {
     setnftsNotClaimedBoost(nftsNotClaimedAllDropsBoost);
   }, [userAmNft, claimData]);
 
-  function getUniquePropertyValues(jsonArray) {
+  function getUniquePropertyValues(jsonArray, claimRequestsBoost) {
     const uniqueValues = new Set();
     const resultArray = [];
 
@@ -246,14 +249,76 @@ const HomePage = ({ ip }) => {
             status: jsonObject.requestStatus,
             hodlerAddress: jsonObject.holderEthAddress,
             nfts: nfts.push(jsonObject.nftId),
+            boostNfts: claimRequestsBoost.find(
+              (item) => item.claimRequestId === uniqueValue
+            )?.nfts,
             totalCkb: Number((totalCkb += Number(jsonObject.eachCKB))),
             totalKda: Number((totalKda += Number(jsonObject.eachKDA))),
             totalLtc: Number((totalLtc += Number(jsonObject.eachLTC))),
+            totalBoostLtc: claimRequestsBoost.find(
+              (item) => item.claimRequestId === uniqueValue
+            )?.totalLtc,
           };
         }
       });
 
       resultArray.push(filteredObject);
+    });
+
+    return resultArray;
+  }
+
+  function getUniquePropertyValuesBoost(jsonArray) {
+    const uniqueValues = new Set();
+    const resultArray = [];
+
+    jsonArray.forEach(function (jsonObject) {
+      uniqueValues.add(jsonObject.claimRequestId);
+    });
+
+    uniqueValues.forEach(function (uniqueValue) {
+      const dropIdNftsMap = new Map();
+      const dropIds = new Set();
+      const filteredObject = {};
+      let totalLtc = 0;
+      let reqStatus = "";
+      let hodlerAddress = "";
+
+      jsonArray.forEach(function (jsonObject) {
+        if (jsonObject.claimRequestId === uniqueValue) {
+          dropIds.add(jsonObject.dropId);
+
+          const dropId = jsonObject.dropId;
+          const nftId = jsonObject.nftId;
+
+          if (!dropIdNftsMap.has(dropId)) {
+            dropIdNftsMap.set(dropId, []);
+          }
+          dropIdNftsMap.get(dropId).push(nftId);
+
+          totalLtc += Number(jsonObject.eachLTC);
+          reqStatus = jsonObject.requestStatus;
+          hodlerAddress = jsonObject.holderEthAddress;
+        }
+      });
+
+      const nfts = [];
+      dropIdNftsMap.forEach((nftIds, dropId) => {
+        nfts.push({
+          dropId: dropId,
+          nfts: nftIds.length,
+        });
+      });
+
+      resultArray.push({
+        claimRequestId: uniqueValue,
+        dropId: Array.from(dropIds),
+        count: nfts.length,
+        status: reqStatus,
+        hodlerAddress: hodlerAddress,
+        nfts: nfts,
+        totalLtc: totalLtc,
+      });
     });
 
     return resultArray;
@@ -273,8 +338,14 @@ const HomePage = ({ ip }) => {
           const filteredArray = claimData.filter(
             (item) => item.holderEthAddress === address
           );
-          const claimRequests = getUniquePropertyValues(filteredArray);
-
+          const claimRequestsBoost =
+            getUniquePropertyValuesBoost(claimDataBoost);
+          setPayoutsBoost(claimRequestsBoost);
+          const claimRequests = getUniquePropertyValues(
+            filteredArray,
+            claimRequestsBoost
+          );
+          console.log(claimRequests);
           setpayouts(claimRequests);
           setloading(false);
         } catch (e) {
@@ -289,14 +360,17 @@ const HomePage = ({ ip }) => {
 
   const handleClaim = async () => {
     setisSendingRequest(true);
-    if (nftsNotClaimed.length > 0) {
+    if (nftsNotClaimed.length > 0 || nftsNotClaimedBoost.length > 0) {
       try {
-        await fetch("/api/claimReward", {
+        await fetch("/api/claimRewardNew", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(nftsNotClaimed),
+          body: JSON.stringify({
+            nftsNotClaimed,
+            nftsNotClaimedBoost,
+          }),
         }).then(async (data) => {
           console.log(data);
 
@@ -311,7 +385,7 @@ const HomePage = ({ ip }) => {
       setisSendingRequest(false);
 
       setIsClaimSent(true);
-      window.location.reload();
+      refreshAll();
     }, 5000);
   };
 
@@ -327,9 +401,11 @@ const HomePage = ({ ip }) => {
             {isLoading ? (
               <Loader />
             ) : hasErrors ? (
-              <div>
-                Error loading data. Please try again.
-                <RefreshButton onClick={refreshAll} />
+              <div className="flex  justify-center">
+                <div className="flex flex-col flex-wrap">
+                  Error loading data. Please try again.
+                  <RefreshButton onClick={refreshAll} />
+                </div>
               </div>
             ) : (
               <div className="w-full">
@@ -346,30 +422,18 @@ const HomePage = ({ ip }) => {
                     </>
                   ) : (
                     <div className="flex justify-between w-full">
-                      <ClaimableTokens
-                        nftsNotClaimed={nftsNotClaimed}
-                        address={address}
-                        nftsNotClaimedBoost={nftsNotClaimedBoost}
-                      />
                       <div>
-                        {nftsNotClaimed || nftsNotClaimedBoost ? (
-                          <div className="flex gap-2 align-middle">
-                            <Button className="px-6 " onClick={handleClaim}>
-                              {isSendingRequest ? (
-                                <>Sending...</>
-                              ) : (
-                                "Send Claim Request"
-                              )}
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="flex gap-2 align-middle">
-                            <Button className="px-6 bg-primary " active={false}>
-                              Claimed
-                            </Button>
-                          </div>
-                        )}
+                        <ClaimableTokens
+                          nftsNotClaimed={nftsNotClaimed}
+                          address={address}
+                          nftsNotClaimedBoost={nftsNotClaimedBoost}
+                        />
                       </div>
+                      <ClaimButton
+                        nftsNotClaimed={nftsNotClaimed}
+                        nftsNotClaimedBoost={nftsNotClaimedBoost}
+                        refreshAll={refreshAll}
+                      />
                     </div>
                   )}
                 </div>

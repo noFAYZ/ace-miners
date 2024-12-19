@@ -63,16 +63,17 @@ model ClaimRequests {
 }
 
 model ClaimRequestStatus {
-  id               String  @id @unique @default(cuid())
-  claimRequestId   String  @unique
-  requestStatus    String
-  holderEthAddress String
-  LTC              Boolean
-  KDA              Boolean
-  CKB              Boolean
-  CkbHash          String?
-  KdaHash          String?
-  LtcHash          String?
+  id                  String  @id @unique @default(cuid())
+  claimRequestId      String  @unique
+  requestStatus       String
+  holderEthAddress    String
+  LTC                 Boolean
+  KDA                 Boolean
+  CKB                 Boolean
+  CkbHash             String?
+  KdaHash             String?
+  LtcHash             String?
+  boostClaimRequestId String? @unique
 
   @@index([claimRequestId])
 }
@@ -87,8 +88,6 @@ model ClaimRequestsBoost {
   holderEthAddress String
   dropId           Int
   eachLTC          String
-  eachKDA          String
-  eachCKB          String
 
   @@index([claimRequestId])
 }
