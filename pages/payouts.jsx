@@ -565,13 +565,13 @@ const PayoutPage = () => {
                   {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                 </div>
                 <div className="col-span-1 font-mono text-gray-100 items-center content-center">
-                  <div className="font-mono text-gray-100 bg-gray-800/50 px-3 py-1.5 rounded-2xl w-fit">
+                  <div className="font-mono text-14 text-gray-100 bg-gray-800/50 px-3 py-1.5 rounded-2xl w-fit">
                     {item.claimRequestId?.slice(0, 6)}...
                     {item.claimRequestId?.slice(-4)}
                   </div>
                 </div>
                 <div className="col-span-1 font-mono text-gray-100 items-center content-center">
-                  <div className="font-mono text-gray-100 bg-gray-800/50 px-3 py-1.5 rounded-2xl w-fit">
+                  <div className="font-mono text-14 text-gray-100 bg-gray-800/50 px-3 py-1.5 rounded-2xl w-fit">
                     {item.hodlerAddress?.slice(0, 6)}...
                     {item.hodlerAddress?.slice(-4)}
                   </div>
@@ -612,7 +612,7 @@ const PayoutPage = () => {
                 </div>
                 <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
                   <span
-                    className={`px-3 py-1 rounded-full text-sm ${
+                    className={`px-3 py-1 rounded-full text-12 ${
                       item.status === "completed"
                         ? "bg-green-500/20 text-green-300"
                         : "bg-yellow-500/20 text-yellow-300"

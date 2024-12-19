@@ -169,7 +169,7 @@ const ClaimButton = ({ nftsNotClaimed, nftsNotClaimedBoost, refreshAll }) => {
               ${
                 isLoading
                   ? "bg-orange-600 cursor-not-allowed"
-                  : "bg-gradient-to-br from-orange-500 to-pink-500 hover:bg-orange-800 active:bg-orange-900"
+                  : "bg-gradient-to-br from-orange-500 to-pink-500 hover:bg-orange-400 active:bg-orange-900"
               }
               transition-colors duration-200 min-w-[160px]
             `}
