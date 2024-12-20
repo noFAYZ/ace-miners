@@ -156,7 +156,11 @@ const PayoutPage = () => {
         throw new Error("Payment request failed");
       }
 
-      console.log("Tansaction:  ",response)
+      // Parse the response data
+    const data = await response.json();
+    
+
+    console.log("Transaction data:", data.data);
 
       await fetchData().finally(() => {
         setProcessing(false);
