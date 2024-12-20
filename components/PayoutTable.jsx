@@ -16,6 +16,7 @@ const ResponsivePayoutTable = ({
   setActiveModal,
   activeModal,
   NFTsColumn,
+  isPayingId,
 }) => {
   const LoadingSpinner = () => (
     <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
@@ -209,7 +210,7 @@ const ResponsivePayoutTable = ({
                       : "bg-blue-600 hover:bg-blue-700"
                   }`}
                 >
-                  {processing ? (
+                  {processing && isPayingId === item.claimRequestId ? (
                     <div className="flex items-center justify-center gap-2">
                       <LoadingSpinner />
                       <span>Processing</span>

@@ -43,6 +43,7 @@ const PayoutPage = () => {
   const [error, setError] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [isPayingId, setIsPayingId] = useState(false);
   const address = useAddress();
   const [activeModal, setActiveModal] = useState(null);
   const [removingId, setRemovingId] = useState(null);
@@ -139,7 +140,7 @@ const PayoutPage = () => {
 
   const handlePay = async (item) => {
     if (!confirm("Are you sure you want to process this payment?")) return;
-
+    setIsPayingId(item.claimRequestId);
     setProcessing(true);
     try {
       const response = await fetch(
@@ -162,6 +163,8 @@ const PayoutPage = () => {
     } catch (error) {
       console.error("Payment error:", error);
       alert("Payment failed: " + error.message);
+    } finally {
+      setIsPayingId(null);
     }
   };
 
@@ -555,6 +558,7 @@ const PayoutPage = () => {
             processing={processing}
             handlePay={handlePay}
             handleRemove={handleRemove}
+            isPayingId={isPayingId}
             isRemoving={isRemoving}
             removingId={removingId}
             setActiveModal={setActiveModal}
