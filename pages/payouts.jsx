@@ -1,9 +1,9 @@
 import { IconCKB, IconKDA, IconLTC } from "@/components/Icon";
+import ResponsivePayoutTable from "@/components/PayoutTable";
 import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 const ITEMS_PER_PAGE = 10;
 const ADMIN_ADDRESSES = [
   "0x664250876c9d9acC92AF91427cC0114a9a22B067",
@@ -446,7 +446,7 @@ const PayoutPage = () => {
 
         {/* Modal */}
         {activeModal === item.claimRequestId && (
-          <div className="fixed inset-0 bg-gray-300/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-gray-300/40 flex items-center justify-center z-50">
             <div className="bg-gray-500 rounded-xl p-6 max-w-lg w-full mx-4 border border-gray-500">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium text-white">NFT Details</h3>
@@ -489,6 +489,7 @@ const PayoutPage = () => {
 
   return (
     <div className="p-8 min-h-screen">
+      {/* Your existing header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-white">Payouts Dashboard</h1>
@@ -500,14 +501,14 @@ const PayoutPage = () => {
             }`}
           >
             {isRefreshing ? <LoadingSpinner /> : null}
-
             {isRefreshing ? "Refreshing..." : "Refresh"}
           </button>
         </div>
         <ConnectWallet />
       </div>
 
-      <div className="flex gap-4 mb-4 items-center">
+      {/* Your existing filters */}
+      <div className="flex flex-wrap gap-4 mb-4 items-center">
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -527,6 +528,7 @@ const PayoutPage = () => {
         />
       </div>
 
+      {/* Error message display */}
       {error && (
         <div className="mb-4 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200">
           <p className="font-medium">Error:</p>
@@ -534,18 +536,8 @@ const PayoutPage = () => {
         </div>
       )}
 
+      {/* Replace your existing table with the new ResponsivePayoutTable */}
       <div className="rounded-xl shadow-xl overflow-hidden border border-gray-300">
-        <div className="grid grid-cols-12 gap-4 p-4 bg-black text-gray-200 font-medium text-sm">
-          <div className="col-span-1 flex justify-center">ID</div>
-          <div className="col-span-1 flex justify-center">Request ID</div>
-          <div className="col-span-1 flex justify-center">Address</div>
-          <div className="col-span-2 flex justify-center">Amount</div>
-          <div className="col-span-1 flex justify-center">Status</div>
-          <div className="col-span-2 flex justify-center">Transactions</div>
-          <div className="col-span-3 flex justify-center">NFTs</div>
-          <div className="col-span-1 flex justify-center">Actions</div>
-        </div>
-
         {payouts.length === 0 ? (
           <div className="p-8 text-center text-gray-200">
             No payouts data available
@@ -555,200 +547,25 @@ const PayoutPage = () => {
             No matching payouts found
           </div>
         ) : (
-          <div className="divide-y divide-gray-800">
-            {paginatedPayouts.map((item, index) => (
-              <div
-                key={item.claimRequestId}
-                className="grid grid-cols-12 gap-4 p-4 hover:bg-gray-800/30 text-gray-300"
-              >
-                <div className="col-span-1 text-gray-100 flex justify-center items-center content-center">
-                  {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
-                </div>
-                <div className="col-span-1 font-mono text-gray-100 items-center content-center">
-                  <div className="font-mono text-14 text-gray-100 bg-gray-800/50 px-3 py-1.5 rounded-2xl w-fit">
-                    {item.claimRequestId?.slice(0, 6)}...
-                    {item.claimRequestId?.slice(-4)}
-                  </div>
-                </div>
-                <div className="col-span-1 font-mono text-gray-100 items-center content-center">
-                  <div className="font-mono text-14 text-gray-100 bg-gray-800/50 px-3 py-1.5 rounded-2xl w-fit">
-                    {item.hodlerAddress?.slice(0, 6)}...
-                    {item.hodlerAddress?.slice(-4)}
-                  </div>
-                </div>
-                <div className="col-span-2 items-center content-center align-middle justify-items-center justify-self-center">
-                  <div className="flex flex-wrap justify-center gap-1 items-center content-center align-middle justify-items-center justify-self-center">
-                    <span className=" my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                      <span className="bg-primary rounded-full px-2">
-                        {item?.totalLtc.toFixed(4)}{" "}
-                      </span>{" "}
-                      <IconLTC width={20} />
-                    </span>
-
-                    <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                      <span className="bg-primary rounded-full px-2">
-                        {item?.totalKda.toFixed(2)}{" "}
-                      </span>
-                      <IconKDA width={14} />
-                    </span>
-                    <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                      <span className="bg-primary rounded-full px-2">
-                        {item?.totalCkb.toFixed(0)}{" "}
-                      </span>{" "}
-                      <IconCKB width={18} />
-                    </span>
-                    {item?.totalBoostLtc ? (
-                      <>
-                        {" "}
-                        <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-gray-50 font-300 rounded-full">
-                          <span className="bg-red-500 rounded-full px-2">
-                            {item?.totalBoostLtc?.toFixed(4)}{" "}
-                          </span>{" "}
-                          <IconLTC width={18} />
-                        </span>
-                      </>
-                    ) : null}
-                  </div>
-                </div>
-                <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
-                  <span
-                    className={`px-3 py-1 rounded-full text-12 ${
-                      item.status === "completed"
-                        ? "bg-green-500/20 text-green-300"
-                        : "bg-yellow-500/20 text-yellow-300"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </div>
-                <div className="col-span-2 items-center content-center align-middle justify-items-center justify-self-center">
-                  <div className="flex gap-2">
-                    {txData
-                      .filter((tx) => tx.claimRequestId == item.claimRequestId)
-                      .map((tx) => (
-                        <div key={tx.claimRequestId} className="flex gap-2">
-                          {tx.LtcHash && (
-                            <Link
-                              href={
-                                `https://blockexplorer.one/litecoin/mainnet/tx/` +
-                                tx?.LtcHash
-                              }
-                            >
-                              <a target="_blank" rel="noopener noreferrer">
-                                <span className=" my-3 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                                  <>
-                                    <IconLTC width={20} />
-                                    <span className="bg-primary rounded-full px-1 ">
-                                      ✓
-                                    </span>
-                                  </>
-                                </span>
-                              </a>
-                            </Link>
-                          )}
-                          {tx.KdaHash && (
-                            <Link
-                              href={
-                                `https://kdaexplorer.com/tx-details/` +
-                                tx?.KdaHash
-                              }
-                            >
-                              <a target="_blank" rel="noopener noreferrer">
-                                <span className="my-3 pl-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                                  <>
-                                    <IconKDA width={14} />
-                                    <span className="bg-primary rounded-full px-2">
-                                      ✓
-                                    </span>
-                                  </>
-                                </span>
-                              </a>
-                            </Link>
-                          )}
-                          {tx.CkbHash && (
-                            <Link
-                              href={
-                                `https://explorer.nervos.org/transaction/` +
-                                tx?.CkbHash
-                              }
-                            >
-                              <a target="_blank" rel="noopener noreferrer">
-                                <span className="my-3 pr-1 flex gap-1 bg-gray-200 text-white font-300 rounded-full">
-                                  <>
-                                    <IconCKB width={18} />
-                                    <span className="bg-primary rounded-full px-2">
-                                      ✓
-                                    </span>{" "}
-                                  </>
-                                </span>{" "}
-                              </a>
-                            </Link>
-                          )}
-                        </div>
-                      ))}
-                    {!txData.filter(
-                      (tx) => tx.claimRequestId == item.claimRequestId
-                    )?.length > 0 ? (
-                      <span className="text-gray-100">Not Sent Yet</span>
-                    ) : null}
-                  </div>
-                </div>
-                <div className="col-span-3 items-center content-center align-middle justify-items-center justify-self-center">
-                  <div
-                    style={{
-                      width: "200px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <NFTsColumn item={item} />
-                  </div>
-                </div>
-                <div className="col-span-1 flex flex-col gap-2">
-                  <button
-                    onClick={() => handlePay(item)}
-                    disabled={processing || item.status === "completed"}
-                    className={`px-3 py-1 rounded-xl text-gray-100 text-sm ${
-                      processing || item.status === "completed"
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700"
-                    }`}
-                  >
-                    {processing ? (
-                      <div className="flex items-center justify-center gap-2">
-                        <LoadingSpinner />
-                        <span>Processing</span>
-                      </div>
-                    ) : item.status === "completed" ? (
-                      "Paid"
-                    ) : (
-                      "Pay"
-                    )}
-                  </button>
-                  <button
-                    onClick={() => handleRemove(item)}
-                    disabled={processing}
-                    className="px-3 py-1 rounded-xl text-gray-100 text-sm bg-red-800 hover:bg-red-700"
-                  >
-                    {isRemoving && removingId === item.claimRequestId ? (
-                      <div className="flex items-center justify-center gap-2">
-                        <Loader className="h-4 w-4 animate-spin" />
-                        <span>Removing...</span>
-                      </div>
-                    ) : (
-                      <>Remove</>
-                    )}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ResponsivePayoutTable
+            paginatedPayouts={paginatedPayouts}
+            currentPage={currentPage}
+            ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+            txData={txData}
+            processing={processing}
+            handlePay={handlePay}
+            handleRemove={handleRemove}
+            isRemoving={isRemoving}
+            removingId={removingId}
+            setActiveModal={setActiveModal}
+            activeModal={activeModal}
+            NFTsColumn={NFTsColumn} // Pass your existing NFTsColumn component
+          />
         )}
       </div>
 
       {filteredPayouts.length > 0 && (
-        <div className="flex justify-between items-center mt-4 text-gray-100">
+        <div className="flex flex-wrap justify-between items-center mt-4 text-gray-100">
           <div>
             Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
             {Math.min(currentPage * ITEMS_PER_PAGE, filteredPayouts.length)} of{" "}

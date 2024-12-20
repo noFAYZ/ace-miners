@@ -62,7 +62,7 @@ const NFTCollectionTabs = ({ isNftsLoading, userAmNft, userAmBoostNft }) => {
   return (
     <div className="space-y-4 pb-5">
       {/* Tab Navigation */}
-      <div className="flex space-x-1 w-1/2 bg-gray-400 p-1 rounded-3xl border-[1px]">
+      <div className="flex space-x-1 w-full md:w-1/2 bg-gray-400 p-1 rounded-3xl border-[1px]">
         {tabs.map((tab) => (
           <button
             key={tab.id}

@@ -18,6 +18,7 @@ import Link from "next/link";
 
 import Loader from "@/components/Loader";
 import NFTCollectionTabs from "@/components/NFTTabs";
+import { AlertCircle, RefreshCcw } from "lucide-react";
 
 import ClaimButton from "@/components/ClaimButton";
 import ClaimRewardHistory from "@/components/ClaimRewardHistory";
@@ -389,6 +390,40 @@ const HomePage = ({ ip }) => {
     }, 5000);
   };
 
+  const ErrorState = ({ refreshAll }) => {
+    return (
+      <div className="flex items-center justify-center w-full min-h-[400px] p-4">
+        <div className="max-w-md w-full">
+          {/* Error Alert */}
+          <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200">
+            <div className="flex items-start">
+              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">
+                  Error Loading Data
+                </h3>
+                <p className="mt-2 text-sm text-red-700">
+                  We encountered an issue while fetching your data. This might
+                  be due to network connectivity or server issues.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Section */}
+          <div className="flex flex-col items-center text-center">
+            <RefreshButton onClick={refreshAll} />
+
+            <p className="mt-4 text-sm text-gray-600">
+              If the problem persists, please contact support or try again
+              later.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       {" "}
@@ -401,12 +436,7 @@ const HomePage = ({ ip }) => {
             {isLoading ? (
               <Loader />
             ) : hasErrors ? (
-              <div className="flex  justify-center">
-                <div className="flex flex-col flex-wrap">
-                  Error loading data. Please try again.
-                  <RefreshButton onClick={refreshAll} />
-                </div>
-              </div>
+              <ErrorState refreshAll={refreshAll} />
             ) : (
               <div className="w-full">
                 <div className="flex justify-between   flex-wrap xl:justify-between sm:justify-center  mb-5  gap-4">
@@ -421,7 +451,7 @@ const HomePage = ({ ip }) => {
                       </Button>
                     </>
                   ) : (
-                    <div className="flex justify-between w-full">
+                    <div className="flex flex-wrap gap-2 justify-between w-full">
                       <div>
                         <ClaimableTokens
                           nftsNotClaimed={nftsNotClaimed}
