@@ -36,14 +36,30 @@ const ResponsivePayoutTable = ({
     </svg>
   );
 
-  const isAnyHashMissing = (tx) => {
-    return !tx.LtcHash || !tx.KdaHash || !tx.CkbHash;
-  };
+  const isPaid = (item) => {
+    console.log(item)
+    // If no transactions exist
+    if (!txData.length) {
+      return false
+    }
 
-  // Find if any transaction for this claim request has missing hashes
-  const hasAnyMissingHash = (item) => txData
-    .filter((tx) => tx.claimRequestId === item.claimRequestId)
-    .some(isAnyHashMissing);
+    // Find matching transaction for this claim request
+    const matchingTx = txData.find(tx => tx?.claimRequestId === item?.claimRequestId);
+
+    // If no matching transaction found
+    if (!matchingTx) {
+      return false
+    }
+
+    // Check if any payment is pending (false) or all payments are undefined
+    const needsPayment =
+      matchingTx?.LTC === false ||
+      matchingTx?.KDA === false ||
+      matchingTx?.CKB === false ||
+      (!matchingTx?.LTC && !matchingTx?.KDA && !matchingTx?.CKB);
+
+    return needsPayment
+  };
 
   return (
     <div className="w-full overflow-hidden">
@@ -133,8 +149,8 @@ const ResponsivePayoutTable = ({
               <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
                 <span
                   className={`px-3 py-1 rounded-full text-12 ${item.status === "completed"
-                      ? "bg-green-500/20 text-green-300"
-                      : "bg-yellow-500/20 text-yellow-300"
+                    ? "bg-green-500/20 text-green-300"
+                    : "bg-yellow-500/20 text-yellow-300"
                     }`}
                 >
                   {item.status}
@@ -225,10 +241,10 @@ const ResponsivePayoutTable = ({
               <div className="col-span-1 flex flex-col gap-2 ">
                 <button
                   onClick={() => handlePay(item)}
-                  disabled={processing || item.status === "completed"}
-                  className={`px-3 py-1 rounded-xl text-gray-100 text-sm ${processing || item.status === "completed"
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
+                  disabled={processing || (item.status === "completed" && isPaid(item))}
+                  className={`px-3 py-1 rounded-xl text-gray-100 text-sm ${processing || (item.status === "completed" && isPaid(item))
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
                     }`}
                 >
                   {processing && isPayingId === item.claimRequestId ? (
@@ -236,7 +252,7 @@ const ResponsivePayoutTable = ({
                       <LoadingSpinner />
                       <span>Processing</span>
                     </div>
-                  ) : item.status === "completed" ? (
+                  ) : item.status === "completed" && isPaid(item) ? (
                     "Paid"
                   ) : (
                     "Pay"
@@ -272,8 +288,8 @@ const ResponsivePayoutTable = ({
                 </div>
                 <div
                   className={`px-3 py-1 rounded-full text-sm ${item.status === "completed"
-                      ? "bg-green-500/20 text-green-300"
-                      : "bg-yellow-500/20 text-yellow-300"
+                    ? "bg-green-500/20 text-green-300"
+                    : "bg-yellow-500/20 text-yellow-300"
                     }`}
                 >
                   {item.status}
@@ -317,14 +333,14 @@ const ResponsivePayoutTable = ({
               <div className="flex bg-gray-300/50 justify-center rounded-2xl gap-1 px-2 py-2">
                 <button
                   onClick={() => handlePay(item)}
-                  disabled={processing || (item.status === "completed" &&  txData
+                  disabled={processing || (item.status === "completed" && txData
                     .filter((tx) => tx.claimRequestId === item.claimRequestId)
-                    .every((tx) => tx.LtcHash && tx.KdaHash && tx.CkbHash)) }
-                  className={` py-2 rounded-xl text-gray-100 text-sm flex items-center gap-2 w-1/2 text-center content-center justify-center ${processing ||  (item.status === "completed" &&  txData
+                    .every((tx) => tx.LtcHash && tx.KdaHash && tx.CkbHash))}
+                  className={` py-2 rounded-xl text-gray-100 text-sm flex items-center gap-2 w-1/2 text-center content-center justify-center ${processing || (item.status === "completed" && txData
                     .filter((tx) => tx.claimRequestId === item.claimRequestId)
                     .every((tx) => tx.LtcHash && tx.KdaHash && tx.CkbHash))
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700"
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
                     }`}
                 >
                   {processing ? (
@@ -332,7 +348,7 @@ const ResponsivePayoutTable = ({
                       <LoadingSpinner />
                       Processing
                     </>
-                  ) : (item.status === "completed" &&  txData
+                  ) : (item.status === "completed" && txData
                     .filter((tx) => tx.claimRequestId === item.claimRequestId)
                     .every((tx) => tx.LtcHash && tx.KdaHash && tx.CkbHash)) ? (
                     "Paid"
