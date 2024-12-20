@@ -221,7 +221,7 @@ const ResponsivePayoutTable = ({
                   className={`px-3 py-1 rounded-xl text-gray-100 text-sm ${
                     processing || item.status === "completed"
                       ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700"
+                      : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
                   }`}
                 >
                   {processing && isPayingId === item.claimRequestId ? (
@@ -238,7 +238,7 @@ const ResponsivePayoutTable = ({
                 <button
                   onClick={() => handleRemove(item)}
                   disabled={processing}
-                  className="px-3 py-1 rounded-xl text-gray-100 text-sm bg-red-800 hover:bg-red-700"
+                  className="px-3 py-1 rounded-xl text-gray-100 text-sm bg-red-800 hover:bg-red-700 hover:scale-105 hover:border-1"
                 >
                   {isRemoving && removingId === item.claimRequestId ? (
                     <div className="flex items-center justify-center gap-2">
