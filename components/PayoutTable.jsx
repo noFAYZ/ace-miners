@@ -36,6 +36,15 @@ const ResponsivePayoutTable = ({
     </svg>
   );
 
+  const isAnyHashMissing = (tx) => {
+    return !tx.LtcHash || !tx.KdaHash || !tx.CkbHash;
+  };
+
+  // Find if any transaction for this claim request has missing hashes
+  const hasAnyMissingHash = (item) => txData
+    .filter((tx) => tx.claimRequestId === item.claimRequestId)
+    .some(isAnyHashMissing);
+
   return (
     <div className="w-full overflow-hidden">
       {/* Desktop Header */}
@@ -123,11 +132,10 @@ const ResponsivePayoutTable = ({
               </div>
               <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
                 <span
-                  className={`px-3 py-1 rounded-full text-12 ${
-                    item.status === "completed"
+                  className={`px-3 py-1 rounded-full text-12 ${item.status === "completed"
                       ? "bg-green-500/20 text-green-300"
                       : "bg-yellow-500/20 text-yellow-300"
-                  }`}
+                    }`}
                 >
                   {item.status}
                 </span>
@@ -218,11 +226,10 @@ const ResponsivePayoutTable = ({
                 <button
                   onClick={() => handlePay(item)}
                   disabled={processing || item.status === "completed"}
-                  className={`px-3 py-1 rounded-xl text-gray-100 text-sm ${
-                    processing || item.status === "completed"
+                  className={`px-3 py-1 rounded-xl text-gray-100 text-sm ${processing || item.status === "completed"
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
-                  }`}
+                    }`}
                 >
                   {processing && isPayingId === item.claimRequestId ? (
                     <div className="flex items-center justify-center gap-2">
@@ -264,11 +271,10 @@ const ResponsivePayoutTable = ({
                   </div>
                 </div>
                 <div
-                  className={`px-3 py-1 rounded-full text-sm ${
-                    item.status === "completed"
+                  className={`px-3 py-1 rounded-full text-sm ${item.status === "completed"
                       ? "bg-green-500/20 text-green-300"
                       : "bg-yellow-500/20 text-yellow-300"
-                  }`}
+                    }`}
                 >
                   {item.status}
                 </div>
@@ -312,18 +318,17 @@ const ResponsivePayoutTable = ({
                 <button
                   onClick={() => handlePay(item)}
                   disabled={processing || item.status === "completed"}
-                  className={` py-2 rounded-xl text-gray-100 text-sm flex items-center gap-2 w-1/2 text-center content-center justify-center ${
-                    processing || item.status === "completed"
+                  className={` py-2 rounded-xl text-gray-100 text-sm flex items-center gap-2 w-1/2 text-center content-center justify-center ${processing || (item.status === "completed" && !hasAnyMissingHash)
                       ? "bg-gray-300 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700"
-                  }`}
+                    }`}
                 >
                   {processing ? (
                     <>
                       <LoadingSpinner />
                       Processing
                     </>
-                  ) : item.status === "completed" ? (
+                  ) : item.status === "completed" && !hasAnyMissingHash ? (
                     "Paid"
                   ) : (
                     "Pay"
