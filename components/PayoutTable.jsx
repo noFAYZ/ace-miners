@@ -50,7 +50,7 @@ const ResponsivePayoutTable = ({
     if (!matchingTx) {
       return false
     }
-   // console.log(matchingTx)
+    // console.log(matchingTx)
     // Check if any payment is pending (false) or all payments are undefined
     const needsPayment =
       matchingTx?.LTC === false ||
