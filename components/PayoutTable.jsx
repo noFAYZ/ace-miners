@@ -37,7 +37,7 @@ const ResponsivePayoutTable = ({
   );
 
   const isPaid = (item) => {
-    console.log(item)
+
     // If no transactions exist
     if (!txData.length) {
       return false
@@ -50,7 +50,7 @@ const ResponsivePayoutTable = ({
     if (!matchingTx) {
       return false
     }
-
+    console.log(matchingTx)
     // Check if any payment is pending (false) or all payments are undefined
     const needsPayment =
       matchingTx?.LTC === false ||
@@ -241,8 +241,8 @@ const ResponsivePayoutTable = ({
               <div className="col-span-1 flex flex-col gap-2 ">
                 <button
                   onClick={() => handlePay(item)}
-                  disabled={processing || (item.status === "completed" && isPaid(item))}
-                  className={`px-3 py-1 rounded-xl text-gray-100 text-sm ${processing || (item.status === "completed" && isPaid(item))
+                  disabled={processing || (item.status === "completed" && !isPaid(item))}
+                  className={`px-3 py-1 rounded-xl text-gray-100 text-sm ${processing || (item.status === "completed" && !isPaid(item))
                     ? "bg-gray-300 cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
                     }`}
@@ -252,7 +252,7 @@ const ResponsivePayoutTable = ({
                       <LoadingSpinner />
                       <span>Processing</span>
                     </div>
-                  ) : item.status === "completed" && isPaid(item) ? (
+                  ) : item.status === "completed" && !isPaid(item) ? (
                     "Paid"
                   ) : (
                     "Pay"
