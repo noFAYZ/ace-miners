@@ -363,7 +363,7 @@ const PayoutPage = () => {
     );
   }
 
-  const CombinedNFTsDisplay = ({ item }) => {
+  const CombinedNFTsDisplay = ({ item, count }) => {
     // Create a map of all dropIds and their corresponding NFTs
     const dropIdMap = new Map();
 
@@ -386,12 +386,18 @@ const PayoutPage = () => {
       ([a], [b]) => a - b
     );
 
+    let printIdLength = sortedNFTs.length;
+
+    if (count) {
+      printIdLength = count;
+    }
+
     return (
       <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
-        {sortedNFTs.map(([dropId, { regular, boost }]) => (
+        {sortedNFTs.slice(0, count).map(([dropId, { regular, boost }]) => (
           <div key={dropId} className="flex justify-center gap-2">
             {regular && (
-              <span className="bg-primary text-gray-50 rounded-full pl-2 py-1">
+              <span className="bg-primary text-gray-50 text-12 rounded-full pl-2 py-1">
                 Reward# {regular.dropId}{" "}
                 <span className="bg-green-900 text-gray-50 rounded-full px-2 py-1">
                   {regular.nfts} NFTs
@@ -399,9 +405,9 @@ const PayoutPage = () => {
               </span>
             )}
             {boost && (
-              <span className="bg-primary text-gray-50 rounded-full pl-2 py-1">
+              <span className="bg-primary text-gray-50 text-12 rounded-full pl-2 py-1">
                 Reward# {boost.dropId}{" "}
-                <span className="bg-red-500 text-gray-50 rounded-full px-2 py-1">
+                <span className="bg-red-500 text-gray-50 text-12 rounded-full px-2 py-1">
                   {boost.nfts} Boost NFTs
                 </span>
               </span>
@@ -422,19 +428,7 @@ const PayoutPage = () => {
       <div className="col-span-3 items-center content-center align-middle justify-items-center justify-self-center">
         <div className="flex flex-col gap-2">
           {/* Preview of first 2 NFTs */}
-          {displayedNfts.map((e, index) => (
-            <div
-              key={index}
-              className="flex gap-2 items-center text-gray-100 text-sm"
-            >
-              <span className="bg-primary text-gray-50 rounded-full pl-2 py-1">
-                Reward# {e.dropId}{" "}
-                <span className="bg-green-900 text-gray-50 rounded-full px-2 py-1">
-                  {e.nfts} NFTs
-                </span>
-              </span>
-            </div>
-          ))}
+          <CombinedNFTsDisplay item={item} count={2} />
 
           {/* View All button if there are more than 2 NFTs */}
           {remainingCount > 0 && (

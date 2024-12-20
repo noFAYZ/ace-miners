@@ -40,14 +40,30 @@ const ResponsivePayoutTable = ({
     <div className="w-full overflow-hidden">
       {/* Desktop Header */}
       <div className="hidden lg:grid grid-cols-12 gap-4 p-4 bg-black text-gray-200 font-medium text-sm">
-        <div className="col-span-1">ID</div>
-        <div className="col-span-1">Request ID</div>
-        <div className="col-span-2">Address</div>
-        <div className="col-span-2">Amount</div>
-        <div className="col-span-1">Status</div>
-        <div className="col-span-2">Transactions</div>
-        <div className="col-span-2">NFTs</div>
-        <div className="col-span-1">Actions</div>
+        <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
+          ID
+        </div>
+        <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
+          Request ID
+        </div>
+        <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
+          Address
+        </div>
+        <div className="col-span-2 items-center content-center align-middle justify-items-center justify-self-center">
+          Amount
+        </div>
+        <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
+          Status
+        </div>
+        <div className="col-span-2 items-center content-center align-middle justify-items-center justify-self-center">
+          Transactions
+        </div>
+        <div className="col-span-3 items-center content-center align-middle justify-items-center justify-self-center">
+          NFTs
+        </div>
+        <div className="col-span-1 items-center content-center align-middle justify-items-center justify-self-center">
+          Actions
+        </div>
       </div>
 
       {/* Responsive Table Body */}
@@ -191,8 +207,6 @@ const ResponsivePayoutTable = ({
               <div className="col-span-3 items-center content-center align-middle justify-items-center justify-self-center">
                 <div
                   style={{
-                    width: "200px",
-                    overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                   }}
@@ -200,7 +214,7 @@ const ResponsivePayoutTable = ({
                   <NFTsColumn item={item} />
                 </div>
               </div>
-              <div className="col-span-1 flex flex-col gap-2">
+              <div className="col-span-1 flex flex-col gap-2 ">
                 <button
                   onClick={() => handlePay(item)}
                   disabled={processing || item.status === "completed"}
