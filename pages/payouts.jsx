@@ -156,6 +156,8 @@ const PayoutPage = () => {
         throw new Error("Payment request failed");
       }
 
+      console.log("Tansaction:  ",response)
+
       await fetchData().finally(() => {
         setProcessing(false);
       });
