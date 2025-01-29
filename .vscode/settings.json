@@ -14,6 +14,9 @@
   "emmet.includeLanguages": { "javascript": "javascriptreact" },
   "editor.quickSuggestions": {
     "strings": true
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
   // "tailwindCSS.rootFontSize": 10
 }
