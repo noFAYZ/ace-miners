@@ -1,14 +1,13 @@
 import { chainURL } from "@/constant/consonants";
-import { Polygon } from "@thirdweb-dev/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Ethereum } from "@thirdweb-dev/chains";
 import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
 import { ThemeProvider } from "next-themes";
 import "../styles/globals.css";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 function MyApp({ Component, pageProps }) {
   const queryClient = new QueryClient();
-  const activeChainId = ChainId.Mumbai;
+  const activeChainId = ChainId.Mainnet;
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -16,7 +15,7 @@ function MyApp({ Component, pageProps }) {
         chainRpc={{
           activeChainId: chainURL,
         }}
-        activeChain={Polygon}
+        activeChain={Ethereum}
         desiredChainId={activeChainId}
         clientId="4fa9fe82f6216150b9907c61892801fe"
         autoConnect={true}

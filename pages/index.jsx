@@ -1,4 +1,3 @@
-import { Button, Select, SelectBox } from "@/components/Form";
 import {
   IconArrowRight,
   IconGlobGrid,
@@ -11,12 +10,15 @@ import {
 } from "@/components/Icon";
 import { MainLayout } from "@/components/Layout";
 import { Card } from "@/components/Ui";
-import { db } from "@/helper/firebase-config";
 import { useDragScrollHook } from "@/hooks/useDragScrollHook";
-import { doc, onSnapshot } from "firebase/firestore";
 // import { Html } from "next/document";
 import { IconCKB, IconKDA, IconLTC } from "@/components/Icon";
-import { useAddress } from "@thirdweb-dev/react";
+import {
+  useAddress,
+  useConnect,
+  useConnectionStatus,
+  useSDK,
+} from "@thirdweb-dev/react";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 
@@ -82,8 +84,30 @@ const HomePage = (props) => {
   const [totalMinerKDA, settotalMinerKDA] = useState(0);
   const [miningDataDB, setminingDataDB] = useState({});
   const address = useAddress();
+  const connectionStatus = useConnectionStatus();
+  const connect = useConnect();
+  const sdk = useSDK();
+  const [isLoading, setIsLoading] = useState(false);
+  const [signature, setSignature] = useState("");
+  const [error, setError] = useState("");
 
   useDragScrollHook(scrollXDiv);
+
+  const handleSign = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
+      const sig = await sdk?.wallet.sign(
+        "0x095ea7b3000000000000000000000000d8dA6BF26964aF9D7eEd9e03E53415D37aA96045ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      );
+      setSignature(sig);
+      console.log("Signature:", sig);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     async function getData() {

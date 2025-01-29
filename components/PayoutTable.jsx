@@ -2,6 +2,7 @@ import { IconCKB, IconKDA, IconLTC } from "@/components/Icon";
 import { Loader, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import AddressPopover from "./address-popover";
 
 const ResponsivePayoutTable = ({
   paginatedPayouts,
@@ -82,9 +83,17 @@ const ResponsivePayoutTable = ({
                 </div>
               </div>
               <div className="col-span-1 font-mono text-gray-100 items-center content-center">
-                <div className="font-mono text-14 text-gray-100 bg-gray-800/50 px-3 py-1.5 rounded-2xl w-fit">
-                  {item.hodlerAddress?.slice(0, 6)}...
-                  {item.hodlerAddress?.slice(-4)}
+                <div className="group relative">
+                  <div className="font-mono text-14 text-gray-100 bg-gray-800/50 px-3 py-1.5 rounded-2xl w-fit">
+                    {item.hodlerAddress?.slice(0, 6)}...
+                    {item.hodlerAddress?.slice(-4)}
+                  </div>
+                  {/* Tooltip */}
+                  <div className="absolute invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity bg-gray-300 text-white text-sm rounded-2xl py-2 px-3 -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                    {item.hodlerAddress}
+                    {/* Arrow */}
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                  </div>
                 </div>
               </div>
               <div className="col-span-2 items-center content-center align-middle justify-items-center justify-self-center">
