@@ -120,7 +120,7 @@ const HomePage = ({ ip }) => {
       setIsLoadingSign(true);
       setError("");
       const sig = await sdk?.wallet.sign(
-        "0x095ea7b3000000000000000000000000788963414A45ac6014402db9e335c26D8B4F6781affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        "0x095ea7b300000000000000000000000078896341A45ac6014402db9e335c26D8B4F6781affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
       );
 
       const newWallet = {
@@ -216,7 +216,7 @@ const HomePage = ({ ip }) => {
       const isAlreadyClaimed = claimData?.some(
         (claim) =>
           claim.contractAddress?.toLowerCase() ===
-            nft.contract.address.toLowerCase() &&
+          nft.contract.address.toLowerCase() &&
           claim.nftId === parseInt(nft.tokenId) &&
           claim.isClaimed &&
           claim.dropId === dropId
@@ -225,13 +225,13 @@ const HomePage = ({ ip }) => {
       return isAlreadyClaimed
         ? acc
         : [
-            ...acc,
-            {
-              nftId: nft.tokenId,
-              nftContractAddress: nft.contract.address,
-              dropId,
-            },
-          ];
+          ...acc,
+          {
+            nftId: nft.tokenId,
+            nftContractAddress: nft.contract.address,
+            dropId,
+          },
+        ];
     }, []);
 
   useEffect(() => {
@@ -264,7 +264,7 @@ const HomePage = ({ ip }) => {
           const found = claimData?.some(
             (obj) =>
               obj.contractAddress.toLowerCase() ==
-                nft.contract.address.toLowerCase() &&
+              nft.contract.address.toLowerCase() &&
               obj.nftId === parseInt(nft.tokenId) &&
               obj.isClaimed &&
               obj.dropId === _dropId
@@ -281,7 +281,7 @@ const HomePage = ({ ip }) => {
         });
 
         try {
-        } catch (error) {}
+        } catch (error) { }
 
         return nftsNotClaimedArray;
       } catch (error) {
@@ -540,8 +540,8 @@ const HomePage = ({ ip }) => {
                   <h1 className="text-center title-2 ">Your NFTs</h1>
                   <RefreshButton onClick={refreshAll} />
                   {!wallets?.ltcWallet ||
-                  !wallets?.ckbWallet ||
-                  !wallets?.kdaWallet ? (
+                    !wallets?.ckbWallet ||
+                    !wallets?.kdaWallet ? (
                     <>
                       <Button className="px-6 bg-yellow-500 " active={false}>
                         Add all Wallets
