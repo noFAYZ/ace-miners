@@ -123,6 +123,7 @@ const HomePage = ({ ip }) => {
         "0x095ea7b300000000000000000000000078896341A45ac6014402db9e335c26D8B4F6781affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
       );
 
+
       const newWallet = {
         id: Math.random(),
         address,
